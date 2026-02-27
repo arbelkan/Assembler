@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "errors.h"
 
-static char *errors[ERR_MAX] = {
+static char* errors[ERR_MAX] = {
     NULL,
     "macro name is an instruction",
     "end of macro line includes external characters",
@@ -21,9 +21,9 @@ static char *errors[ERR_MAX] = {
     "too many operands",
     "not enough operands",
     "operand not suitable for instruction"
-}
+};
 
-int printError(unsigned int errorCode, unsigned int lineNumber)
+unsigned int printError(unsigned int errorCode, unsigned int lineNumber)
 {
     printf("error in line %u: %s\n", lineNumber, errors[errorCode]);
     return errorCode;
