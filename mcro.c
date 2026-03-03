@@ -1,26 +1,104 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "errors.c"
 #include "mcro.h"
 
-//findig a macro by searching it name in the macros table
-int findMcro(char *name, McroTable *t)
-{
-    int i;
-    for (i = 0; t->size >= 0; i++)
-    {
-        if (t[i]->name == name)
-            return i;//macro name was found
-    }
-    return -1;//macro name wasn't fount
+/**
+ * Initialize an empty macro table
+ */
+McroTable* initMcrotable() {
+    McroTable *table = malloc(sizeof(McroTable));
+    table->macros = NULL;
+    table->count = 0;
+    table->capacity = 0;
+    return table;
 }
 
-//adding a new macro to the macros table
-int addMcro(char *mcro, MacroTable *t)
-{
-    t-> size++;
-    t->table = realloc(t->table, t->size * sizeof(Mcro));
-    t->table[t->size-1]->name = mcro;
-    t->table[t->size-1]->body = strlen(mcro);
+/**
+ * Free all memory allocated for macro table
+ */
+void freeMcrotable(McroTable *table) {
+    int i;
+    if (table == NULL) {
+        return;
+    }
+
+    for (i = 0; i < table->count; i++) {
+        free(table->macros[i].name);
+        free(table->macros[i].content);
+    }
+
+    free(table->macros);
+    free(table);
 }
-char *getMcro(char *line, FILE *output);
+
+/**
+ * Search for a macro in the macro table by name
+ * Returns the macro if found, 0 otherwise
+ */
+Mcro* searchMcro(McroTable *table, const char *name) {
+    int i;
+    if (table == NULL || name == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < table->count; i++) {
+        if (strcmp(table->macros[i].name, name) == 0) {
+            return &table->macros[i];
+        }
+    }
+
+    return NULL;
+}
+
+/**
+ * Add a macro to the macro table
+ * If the table is full, it expands the capacity
+ * Returns 1 on success, 0 on failure
+ */
+int addMcro(McroTable *table, const char *name, const char *content) {
+    Mcro *newMacros = NULL;
+    if (table == NULL || name == NULL || content == NULL) {
+        return 0;
+    }
+
+    /*Expand table if necessary*/
+    if (table->count >= table->capacity) {
+        table->capacity *= 2;
+        newMacros = realloc(table->macros, table->capacity * sizeof(Mcro));
+        if (newMacros == NULL) {
+            return 0;
+        }
+        table->macros = newMacros;
+    }
+
+    /*Add new macro*/
+    if (table->macros == NULL) {
+        table->macros = malloc(table->capacity * sizeof(Mcro));
+    }
+
+    table->macros[table->count].name = malloc(strlen(name) + 1);
+    if (table->macros[table->count].name == NULL) {
+        return 0;
+    }
+    strcpy(table->macros[table->count].name, name);
+
+    table->macros[table->count].content = malloc(strlen(content) + 1);
+    if (table->macros[table->count].content == NULL) {
+        free(table->macros[table->count].name);
+        return 0;
+    }
+    strcpy(table->macros[table->count].content, content);
+
+    table->count++;
+    return 1;
+}
+
+/**
+ * Print the expanded macro to output
+ * Prints the macro name and its full content
+ */
+void print_mcro(Mcro *mcro, FILE *output) {
+    if (mcro == NULL || output == NULL) {
+        return;
+    }
+
+    fprintf(output, "%s\n", mcro->content);
+}
