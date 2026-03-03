@@ -21,4 +21,10 @@ typedef enum
     ERR_MAX
 } ErrorCodes;
 
+/**
+ * printing error and its line using error code
+ * @param errorCode - the enum error code
+ * @param lineNumber- the line of the error
+ * @return line number of the error and prints the relevant error
+ **/
 unsigned int printError(unsigned int errorCode, unsigned int lineNumber);
