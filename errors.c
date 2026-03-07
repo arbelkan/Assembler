@@ -4,7 +4,9 @@
 static char* errors[ERR_MAX] = {
     NULL,
     "macro name is an instruction",
+    "decleration of macro line includes external characters",
     "end of macro line includes external characters",
+    "failure in adding macro to table",
     "line longer than 80 characters",
     "external comma",
     "comma not in place",

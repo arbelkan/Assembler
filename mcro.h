@@ -8,7 +8,7 @@
 /*Structure to represent a single macro*/
 typedef struct {
     char *name;/*Macro name*/
-    char *content;/*Macro expanded content*/
+    char *content;/*Macro content*/
 } Mcro;
 
 /*Structure to represent the macro table*/
@@ -21,8 +21,23 @@ typedef struct {
 /*Function declarations*/
 
 /**
+ * Initialize a new macro
+ * @param name - name of the new macro
+ * @return pointer to new Mcro, NULL on failure
+ */
+Mcro initMcro(const char *name);
+
+/**
+ * add content to specific macro
+ * @param mcro - pointer to the specific macro
+ * @param content - the content to add
+ * @return 1 on success, 0 on failure
+ */
+int addContent(Mcro *mcro, const char *content);
+
+/**
  * Initialize an empty macro table
- * @return pointer to new MCROTABLE, NULL on failure
+ * @return pointer to new McroTable, NULL on failure
  */
 McroTable* initMcrotable();
 
@@ -41,13 +56,12 @@ void freeMcrotable(McroTable *table);
 Mcro* searchMcro(McroTable *table, const char *name);
 
 /**
- * Add a macro to the macro table
+ * Add a macro to the macro table with empty content
  * @param table - pointer to McroTable
  * @param name - macro name
- * @param content - macro content (from mcro to mcroend)
  * @return 1 on success, 0 on failure
  */
-int addMcro(McroTable *table, const char *name, const char *content);
+int addMcro(McroTable *table, const char *name);
 
 /**
  * Print the expanded macro to output
