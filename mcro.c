@@ -17,11 +17,11 @@ int addContent(Mcro *mcro, const char *content)
 {
     if (mcro == NULL || content == NULL)
     {
-        return 0;
+        return 1;
     }
 
     strcat(mcro->content, content);
-    return 1;
+    return 0;
 }
 
 /**
@@ -80,7 +80,7 @@ Mcro* searchMcro(McroTable *table, const char *name) {
 int addMcro(McroTable *table, const char *name) {
     Mcro *newMacros = NULL;
     if (table == NULL || name == NULL) {
-        return 0;
+        return 1;
     }
 
     /*Expand table if necessary*/
@@ -88,7 +88,7 @@ int addMcro(McroTable *table, const char *name) {
         table->capacity *= 2;
         newMacros = realloc(table->macros, table->capacity * sizeof(Mcro));
         if (newMacros == NULL) {
-            return 0;
+            return 1;
         }
         table->macros = newMacros;
     }
@@ -101,7 +101,7 @@ int addMcro(McroTable *table, const char *name) {
     table->macros[table->count] = initMcro(name);
 
     table->count++;
-    return 1;
+    return 0;
 }
 
 /**
