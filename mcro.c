@@ -1,4 +1,28 @@
 #include "mcro.h"
+/**
+ * Initialize an empty macro
+ */
+Mcro initMcro(const char *name)
+{
+    static Mcro mcro;
+    strcpy(mcro.name, name);
+    mcro.content = "";
+    return mcro;
+}
+
+/**
+ * add content to specific macro
+ */
+int addContent(Mcro *mcro, const char *content)
+{
+    if (mcro == NULL || content == NULL)
+    {
+        return 1;
+    }
+
+    strcat(mcro->content, content);
+    return 0;
+}
 
 /**
  * Initialize an empty macro table
@@ -53,10 +77,10 @@ Mcro* searchMcro(McroTable *table, const char *name) {
  * If the table is full, it expands the capacity
  * Returns 1 on success, 0 on failure
  */
-int addMcro(McroTable *table, const char *name, const char *content) {
+int addMcro(McroTable *table, const char *name) {
     Mcro *newMacros = NULL;
-    if (table == NULL || name == NULL || content == NULL) {
-        return 0;
+    if (table == NULL || name == NULL) {
+        return 1;
     }
 
     /*Expand table if necessary*/
@@ -64,7 +88,7 @@ int addMcro(McroTable *table, const char *name, const char *content) {
         table->capacity *= 2;
         newMacros = realloc(table->macros, table->capacity * sizeof(Mcro));
         if (newMacros == NULL) {
-            return 0;
+            return 1;
         }
         table->macros = newMacros;
     }
@@ -74,21 +98,10 @@ int addMcro(McroTable *table, const char *name, const char *content) {
         table->macros = malloc(table->capacity * sizeof(Mcro));
     }
 
-    table->macros[table->count].name = malloc(strlen(name) + 1);
-    if (table->macros[table->count].name == NULL) {
-        return 0;
-    }
-    strcpy(table->macros[table->count].name, name);
-
-    table->macros[table->count].content = malloc(strlen(content) + 1);
-    if (table->macros[table->count].content == NULL) {
-        free(table->macros[table->count].name);
-        return 0;
-    }
-    strcpy(table->macros[table->count].content, content);
+    table->macros[table->count] = initMcro(name);
 
     table->count++;
-    return 1;
+    return 0;
 }
 
 /**
