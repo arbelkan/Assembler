@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "defs.h"
 
 /*Structure to represent a single macro*/
 typedef struct {
@@ -31,7 +32,7 @@ Mcro initMcro(const char *name);
  * add content to specific macro
  * @param mcro - pointer to the specific macro
  * @param content - the content to add
- * @return 0 on success, 1 on failure
+ * @return success or failure
  */
 int addContent(Mcro *mcro, const char *content);
 
@@ -59,7 +60,7 @@ Mcro* searchMcro(McroTable *table, const char *name);
  * Add a macro to the macro table with empty content
  * @param table - pointer to McroTable
  * @param name - macro name
- * @return 0 on success, 1 on failure
+ * @return success or failure
  */
 int addMcro(McroTable *table, const char *name);
 

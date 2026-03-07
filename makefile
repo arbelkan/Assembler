@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -Wall -ansi -pedantic
 
 TARGET = assembler
-OBJS = assembler.o asm_state.o pass1.o line_reader.o parser.o pass1_directives.o symbols.o ops.o operand.o pass1_instructions.o code_image.o encoder.o data_image.o
+OBJS = assembler.o asm_state.o pass1.o line_reader.o parser.o pass1_directives.o symbols.o ops.o operand.o pass1_instructions.o code_image.o encoder.o data_image.o errors.o mcro.o
 
 all: $(TARGET)
 
@@ -47,6 +47,12 @@ encoder.o: encoder.c encoder.h word.h ops.h defs.h
 
 data_image.o: data_image.c data_image.h defs.h word.h
 	$(CC) $(CFLAGS) -c data_image.c
+
+errors.o: errors.c errors.h
+	$(CC) $(CFLAGS) -c errors.c
+
+mcro.o: mcro.c mcro.h errors.h defs.h
+	$(CC) $(CFLAGS) -c mcro.c
 
 clean:
 	rm -f $(OBJS) $(TARGET)
