@@ -5,7 +5,7 @@
 #include "pass1.h"
 #include "code_image.h"
 #include "data_image.h"
-#include "pre_assembler.h"
+/* #include "pre_assembler.h"*/
 
 #define SUCCESS 0
 #define FAILURE 1
@@ -33,12 +33,15 @@ int main (int argc, char *argv[]) {
 
 	return any_failed ? FAILURE : SUCCESS;	
 }
+/*
 static int pre_assembler_process(const char *base_name) {
 	char as_file[MAX_PATH];
 	make_filename(am_file, MAX_PATH, base_name, ".am");
+	int line_number = 1;
+	McroTable table = initMcroTable();
 
 }
-
+*/
 static int process_one_file_pass1(const char *base_name) {
 	char am_file[MAX_PATH];
 	AsmState st;

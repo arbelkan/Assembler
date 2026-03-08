@@ -1,4 +1,9 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "defs.h"
 #include "mcro.h"
+
 /**
  * Initialize an empty macro
  */

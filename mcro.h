@@ -1,11 +1,6 @@
 #ifndef MCRO_H
 #define MCRO_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "defs.h"
-
 /*Structure to represent a single macro*/
 typedef struct {
     char *name;/*Macro name*/
