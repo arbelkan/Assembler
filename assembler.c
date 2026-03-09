@@ -5,7 +5,7 @@
 #include "pass1.h"
 #include "code_image.h"
 #include "data_image.h"
-/* #include "pre_assembler.h"*/
+/* #include "preassembler.h" */
 
 #define SUCCESS 0
 #define FAILURE 1
@@ -15,7 +15,7 @@
 static void print_usage(const char *prog);
 static void make_filename(char *out, int out_size, const char *base, const char *ext);
 static int process_one_file_pass1(const char *base_name);
-static int pre_assembler_process(const char *base_name);
+/* static int process_one_file_preassembler(const char *base_name); */
 
 int main (int argc, char *argv[]) {
 	int i;
@@ -34,7 +34,7 @@ int main (int argc, char *argv[]) {
 	return any_failed ? FAILURE : SUCCESS;	
 }
 /*
-static int pre_assembler_process(const char *base_name) {
+static int process_one_file_preassembler(const char *base_name) {
 	char as_file[MAX_PATH];
 	make_filename(am_file, MAX_PATH, base_name, ".am");
 	int line_number = 1;
