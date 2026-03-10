@@ -3,7 +3,6 @@
 #include <string.h>
 #include <ctype.h>
 #include "preassembler_parser.h"
-#include "parser.h"
 #include "ops.h"
 #include "errors.h"
 
@@ -23,85 +22,86 @@ static const char *skip_spaces_internal(const char *p) {
 /* Helper: Extract macro name from line starting with "mcro" */
 static char* extract_mcro_name(const char *line) {
     const char *ptr = line + 4;  /* Skip "mcro" */
-    char *macro_name = "";
+    char *mcro_name = "";
     int i = 0;
 
     ptr = skip_spaces_internal(ptr); /* Skip whitespace */
 
     /* Extract macro name */
-    while (*ptr && *ptr != ' ' && *ptr != '\t' && *ptr != '\n' && *ptr != '\r' && i < max_len - 1) {
-        macro_name[i++] = *ptr++;
+    while (*ptr && *ptr != ' ' && *ptr != '\t' && *ptr != '\n' && *ptr != '\r')
+    {
+        mcro_name[i++] = *ptr++;
     }
-    macro_name[i] = '\0';
-    return macro_name;
+    mcro_name[i] = '\0';
+    return mcro_name;
 }
-
-/* public */
 
 /* Helper: function that validate macro name is not opcode name */
 static int validate_mcro_name(const char *line, int line_number)
 {
     char *mcro_name = extract_mcro_name(line);
-    if (strcmp(macro_name, '\0') == 0)
+    if ((*mcro_name == '\0') || (*mcro_name == '\n') || (*mcro_name == '\r'))
     {
-        printf(printErrors(MACRO_NAME_IS_MISSING,line_number));
+        printError(MACRO_NAME_IS_MISSING,line_number);
         return FAILURE;
     }
     if (op_find(mcro_name) != NULL)
     {
-        printf(printErrors(MACRO_NAME_IS_AN_INSTRUCTION,line_number));
+        printError(MACRO_NAME_IS_AN_INSTRUCTION,line_number);
         return FAILURE;
     }
     return SUCCESS;
 }
 
-/* Validate "mcro" start line format */
-int validate_start_mcro(const char *line, line_number) {
-    const char *ptr = line;
-    char *macro_name = extract_mcro_name(line);
+/* public */
 
-    /* Skip leading whitespace */
-    ptr = skip_spaces_internal(ptr);
+/* Validate "mcro" start line format */
+int validate_start_mcro(const char *line, int line_number) {
+    const char *ptr = line;
+
+    ptr = skip_spaces_internal(ptr);/* Skip leading whitespace */
 
     /* Check for "mcro" keyword */
     if (strncmp(ptr, "mcro", 4) != 0) {
         return FAILURE;
     }
-
     ptr += 4;
 
     /* Must have whitespace after "mcro" */
-    if (!(*ptr == ' ' || *ptr == '\t')) {
+    if (!(*ptr == ' ' || *ptr == '\t'))
+    {
+        printError(DECLERATION_OF_MACRO_LINE_INCLUDES_EXTERNAL_CHARACTERS, line_number);
         return FAILURE;
     }
-
-    /* Skip whitespace after "mcro" */
-    ptr = skip_spaces_internal(ptr);
+    ptr = skip_spaces_internal(ptr);/* Skip whitespace after "mcro" */
 
     /* Validate macro name */
     if (validate_mcro_name(ptr, line_number) == FAILURE) {
         return FAILURE;
     }
-
-    /* Only whitespace/newline should follow macro name */
-    ptr = skip_spaces_internal(ptr);
-
-    return (*ptr == '\0' || *ptr == '\n' || *ptr == '\r') ? SUCCESS : FAILURE;
+    ptr = skip_spaces_internal(ptr);/* Only whitespace/ newline should follow macro name */
+    if(!(*ptr == '\0' || *ptr == '\n' || *ptr == '\r'))
+    {
+        printError(DECLERATION_OF_MACRO_LINE_INCLUDES_EXTERNAL_CHARACTERS, line_number);
+        return FAILURE;
+    }
+    return SUCCESS;
 }
 
 /* Validate "endmcro" line format */
-int validate_end_mcro(const char *line) {
+int validate_end_mcro(const char *line, int line_number) {
     const char *ptr = skip_spaces_internal(line);
 
-    /* Check for "endmcro" */
-    if (strncmp(ptr, "endmcro", 7) != 0) {
+    /* Check for "mcroend" */
+    if (strncmp(ptr, "mcroend", 7) != 0) {
         return FAILURE;
     }
-
     ptr += 7;
-
-    /* Only whitespace/newline should follow */
-    ptr = skip_spaces_internal(ptr);
-
-    return (*ptr == '\0' || *ptr == '\n' || *ptr == '\r') ? SUCCESS : FAILURE;
+    ptr = skip_spaces_internal(ptr);/* Only whitespace/ newline should follow */
+    if(!(*ptr == '\0' || *ptr == '\n' || *ptr == '\r'))
+    {
+        printError(END_OF_MACRO_LINE_INCLUDES_EXTERNAL_CHARACTERS, line_number);
+        return FAILURE;
+    }
+    return SUCCESS;
 }

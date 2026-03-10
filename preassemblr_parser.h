@@ -1,4 +1,0 @@
-#ifndef PREASSEMBLER_PARSER_H
-#define PREASSEMBLER_PARSER_H
-
-#endif
