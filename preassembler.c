@@ -7,9 +7,12 @@
 #include "errors.h"
 #include "preassembler_parser.h"
 
-#define MAX_LINE_LEN 80
-
 /* helpers */
+static const char *skip_spaces_internal(const char *p);
+
+int run_preassembler(McroTable *table, char *as_filename)
+{
+}
 
 /* Helper: Skip leading whitespace */
 static const char *skip_spaces_internal(const char *p) {
@@ -17,9 +20,4 @@ static const char *skip_spaces_internal(const char *p) {
 		p++;
 	}
 	return p;
-}
-
-int run_preassembler(McroTable *table, char *as_filename)
-{
-
 }

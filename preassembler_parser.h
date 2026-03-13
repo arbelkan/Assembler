@@ -1,19 +1,29 @@
 #ifndef PREASSEMBLER_PARSER_H
 #define PREASSEMBLER_PARSER_H
 
-/**
- * check if line includes mcro decleration
- * @param line - selected line
- * @return SUCCESS if includes, else FAILURE
- **/
-int find_mcro_line(const char *line);
+#define SUCCESS 0
+#define FAILURE 1
 
 /**
  * check if line includes mcroend decleration
  * @param line - selected line
  * @return SUCCESS if includes, else FAILURE
  **/
-int find_mcroend_line(const char *line);
+int find_mcro(const char *line);
+
+/**
+ * check if line includes mcroend decleration
+ * @param line - selected line
+ * @return SUCCESS if includes, else FAILURE
+ **/
+int find_mcroend(const char *line);
+
+/**
+ * extracts macro name from decleration line
+ * @param line - mcro decleration line
+ * @return mcro name
+ **/
+char* extract_mcro_name(const char *line);
 
 /**
  * validates mcro decleration line by format

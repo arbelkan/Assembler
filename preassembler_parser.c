@@ -6,19 +6,15 @@
 #include "ops.h"
 #include "errors.h"
 
-#define SUCCESS 0
-#define FAILURE 1
-
 /* internal helpers */
 
 static const char *skip_spaces_internal(const char *p);
-static char* extract_mcro_name(const char *line);
 static int validate_mcro_name(const char *line, int line_number);
 
 /* public */
 
 /* Find mcro decleration in line */
-int find_mcro_line(const char *line) {
+int find_mcro(const char *line) {
     const char *ptr = line;
     while (!(*ptr == '\0' || *ptr == '\n' || *ptr == '\r')) {
         if (strncmp(ptr, "mcro", 4) == 0) {
@@ -30,7 +26,7 @@ int find_mcro_line(const char *line) {
 }
 
 /* Find mcroend decleration in line */
-int find_mcroend_line(const char *line) {
+int find_mcroend(const char *line) {
     const char *ptr = line;
     while (!(*ptr == '\0' || *ptr == '\n' || *ptr == '\r')) {
         if (strncmp(ptr, "mcroend", 7) == 0) {
@@ -39,6 +35,23 @@ int find_mcroend_line(const char *line) {
         ptr += 1;
     }
     return FAILURE;
+}
+
+/* Extract macro name from line starting with "mcro" */
+char* extract_mcro_name(const char *line) {
+    const char *ptr = line + 4;  /* Skip "mcro" */
+    char *mcro_name = "";
+    int i = 0;
+
+    ptr = skip_spaces_internal(ptr); /* Skip whitespace */
+
+    /* Extract macro name */
+    while (*ptr && *ptr != ' ' && *ptr != '\t' && *ptr != '\n' && *ptr != '\r')
+    {
+        mcro_name[i++] = *ptr++;
+    }
+    mcro_name[i] = '\0';
+    return mcro_name;
 }
 
 /* Validate "mcro" start line format */
@@ -100,26 +113,11 @@ static const char *skip_spaces_internal(const char *p) {
     return p;
 }
 
-/* Helper: Extract macro name from line starting with "mcro" */
-static char* extract_mcro_name(const char *line) {
-    const char *ptr = line + 4;  /* Skip "mcro" */
-    char *mcro_name = "";
-    int i = 0;
-
-    ptr = skip_spaces_internal(ptr); /* Skip whitespace */
-
-    /* Extract macro name */
-    while (*ptr && *ptr != ' ' && *ptr != '\t' && *ptr != '\n' && *ptr != '\r')
-    {
-        mcro_name[i++] = *ptr++;
-    }
-    mcro_name[i] = '\0';
-    return mcro_name;
-}
-
-/* Helper: function that validate macro name is not opcode name */
+/* Helper: function that validate macro name */
 static int validate_mcro_name(const char *line, int line_number) {
     char *mcro_name = extract_mcro_name(line);
+    int i;
+
     if ((*mcro_name == '\0') || (*mcro_name == '\n') || (*mcro_name == '\r'))
     {
         printError(MACRO_NAME_IS_MISSING,line_number);
@@ -129,6 +127,14 @@ static int validate_mcro_name(const char *line, int line_number) {
     {
         printError(MACRO_NAME_IS_AN_INSTRUCTION,line_number);
         return FAILURE;
+    }
+    for (i = 0; i < strlen(mcro_name); i++)
+    {
+        if ((i > 30) || (!(isalnum((unsigned char)mcro_name[i]) || mcro_name[i] != '_')))
+        {
+            printError(ILLEGAL_MACRO_NAME,line_number);
+            return FAILURE;
+        }
     }
     return SUCCESS;
 }

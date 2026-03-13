@@ -7,6 +7,7 @@ static char* errors[ERR_MAX] = {
     "decleration of macro line includes external characters",
     "end of macro line includes external characters",
     "macro name is missing",
+    "illegal macro name",
     "failure in adding macro to table",
     "line longer than 80 characters",
     "external comma",

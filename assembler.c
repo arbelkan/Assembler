@@ -35,7 +35,7 @@ int main (int argc, char *argv[]) {
 }
 /*
 static int process_one_file_preassembler(const char *base_name) {
-	char as_file[MAX_PATH];
+	char am_file[MAX_PATH];
 	make_filename(am_file, MAX_PATH, base_name, ".am");
 	int line_number = 1;
 	McroTable table = initMcroTable();
