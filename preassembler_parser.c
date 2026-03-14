@@ -39,11 +39,13 @@ int find_mcroend(const char *line) {
 
 /* Extract macro name from line starting with "mcro" */
 char* extract_mcro_name(const char *line) {
-    const char *ptr = line + 4;  /* Skip "mcro" */
+    const char *ptr = line;
     static char mcro_name[MAX_MCRO_LEN + 2];
     int i = 0;
 
-    ptr = skip_spaces_internal(ptr); /* Skip whitespace */
+    ptr = skip_spaces_internal(ptr); /* skip leading whitespace first */
+    ptr += 4; /* skip "mcro" */
+    ptr = skip_spaces_internal(ptr); /* skip whitespace between "mcro" and name */
 
     /* Extract macro name */
     while (*ptr && *ptr != ' ' && *ptr != '\t' && *ptr != '\n' && *ptr != '\r') {
@@ -56,28 +58,29 @@ char* extract_mcro_name(const char *line) {
 /* Validate "mcro" start line format */
 int validate_start_mcro(const char *line, int line_number) {
     const char *ptr = line;
+    char mcro_name[MAX_MCRO_LEN + 2];
 
-    ptr = skip_spaces_internal(ptr);/* Skip leading whitespace */
+    ptr = skip_spaces_internal(ptr);
 
-    /* Check for "mcro" keyword */
     if (strncmp(ptr, "mcro", 4) != 0) {
+        printError(DECLERATION_OF_MACRO_LINE_INCLUDES_EXTERNAL_CHARACTERS, line_number);
         return FAILURE;
     }
     ptr += 4;
 
-    /* Must have whitespace after "mcro" */
     if (!(*ptr == ' ' || *ptr == '\t')) {
-        printError(DECLERATION_OF_MACRO_LINE_INCLUDES_EXTERNAL_CHARACTERS, line_number);
+        printError(MACRO_NAME_IS_MISSING, line_number);
         return FAILURE;
     }
-    ptr = skip_spaces_internal(ptr);/* Skip whitespace after "mcro" */
+    ptr = skip_spaces_internal(ptr);
 
-    /* Validate macro name */
     if (validate_mcro_name(ptr, line_number) == FAILURE) {
         return FAILURE;
     }
-    ptr = skip_spaces_internal(ptr);/* Only whitespace/ newline should follow macro name */
-    if(!(*ptr == '\0' || *ptr == '\n' || *ptr == '\r')) {
+
+    ptr += strlen(mcro_name);
+    ptr = skip_spaces_internal(ptr);
+    if (!(*ptr == '\0' || *ptr == '\n' || *ptr == '\r')) {
         printError(DECLERATION_OF_MACRO_LINE_INCLUDES_EXTERNAL_CHARACTERS, line_number);
         return FAILURE;
     }
@@ -90,6 +93,7 @@ int validate_end_mcro(const char *line, int line_number) {
 
     /* Check for "mcroend" */
     if (strncmp(ptr, "mcroend", 7) != 0) {
+        printError(END_OF_MACRO_LINE_INCLUDES_EXTERNAL_CHARACTERS, line_number);
         return FAILURE;
     }
     ptr += 7;
@@ -111,21 +115,23 @@ static const char *skip_spaces_internal(const char *p) {
 
 /* Helper: function that validate macro name */
 static int validate_mcro_name(const char *line, int line_number) {
-    char *mcro_name = extract_mcro_name(line);
-    int i;
+    char* mcro_name = extract_mcro_name(line);
+    int i = 0;
 
-    if ((*mcro_name == '\0') || (*mcro_name == '\n') || (*mcro_name == '\r')) {
-        printError(MACRO_NAME_IS_MISSING,line_number);
+    if (mcro_name[0] == '\0') {
+        printError(MACRO_NAME_IS_MISSING, line_number);
         return FAILURE;
     }
+
     if (op_find(mcro_name) != NULL) {
-        printError(MACRO_NAME_IS_AN_INSTRUCTION,line_number);
+        printError(MACRO_NAME_IS_AN_INSTRUCTION, line_number);
         return FAILURE;
     }
-    for (i = 0; i < strlen(mcro_name); i++) {
-        if ((i > (MAX_MCRO_LEN - 1)) || (!(isalnum((unsigned char)mcro_name[i]) || mcro_name[i] != '_')))
+
+    for (i = 0; i < (int)strlen(mcro_name); i++) {
+        if ((i > (MAX_MCRO_LEN - 1)) || !(isalnum((unsigned char)mcro_name[i]) || mcro_name[i] == '_'))
         {
-            printError(ILLEGAL_MACRO_NAME,line_number);
+            printError(ILLEGAL_MACRO_NAME, line_number);
             return FAILURE;
         }
     }

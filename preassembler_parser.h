@@ -3,7 +3,7 @@
 
 #define SUCCESS 0
 #define FAILURE 1
-#define MAX_MCRO_LEN 30 /* from zero to 30 is 31 characters */
+#define MAX_MCRO_LEN 31 /* same length limitation as lable */
 
 /**
  * check if line includes mcroend decleration

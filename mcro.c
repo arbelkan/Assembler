@@ -9,9 +9,25 @@
  */
 Mcro initMcro(const char *name)
 {
-    static Mcro mcro;
+    Mcro mcro;
+
+    mcro.name = (char *)malloc(strlen(name) + 1);
+    if (mcro.name == NULL)
+    {
+        mcro.content = NULL;
+        return mcro;
+    }
     strcpy(mcro.name, name);
-    mcro.content = "";
+
+    mcro.content = (char *)malloc(1); /* empty string: just '\0' */
+    if (mcro.content == NULL)
+    {
+        free(mcro.name);
+        mcro.name = NULL;
+        return mcro;
+    }
+    mcro.content[0] = '\0';
+
     return mcro;
 }
 
@@ -20,11 +36,18 @@ Mcro initMcro(const char *name)
  */
 int addContent(Mcro *mcro, const char *content)
 {
-    if (mcro == NULL || content == NULL)
-    {
-        return FAILURE;
-    }
+    char *new_content;
+    size_t new_len;
 
+    if (mcro == NULL || content == NULL)
+        return FAILURE;
+
+    new_len = strlen(mcro->content) + strlen(content) + 1;
+    new_content = (char *)realloc(mcro->content, new_len);
+    if (new_content == NULL)
+        return FAILURE;
+
+    mcro->content = new_content;
     strcat(mcro->content, content);
     return SUCCESS;
 }
@@ -38,7 +61,7 @@ void printMcro(Mcro *mcro, FILE *output) {
         return;
     }
 
-    fprintf(output, "%s\n", mcro->content);
+    fprintf(output, "%s", mcro->content);
 }
 
 /**
@@ -56,17 +79,20 @@ void initMcrotable(McroTable *table) {
  */
 void freeMcrotable(McroTable *table) {
     int i;
-    if (table == NULL) {
+
+    if (table == NULL)
         return;
-    }
 
     for (i = 0; i < table->count; i++) {
         free(table->macros[i].name);
         free(table->macros[i].content);
     }
-
     free(table->macros);
-    free(table);
+
+    /* defensive reset */
+    table->macros   = NULL;
+    table->count    = 0;
+    table->capacity = 0;
 }
 
 /**
@@ -95,18 +121,21 @@ Mcro* searchMcro(McroTable *table, const char *name) {
  */
 int addMcro(McroTable *table, const char *name) {
     Mcro *newMacros = NULL;
+    int new_cap;
+
     if (table == NULL || name == NULL) {
         return FAILURE;
     }
 
     /*Expand table if necessary*/
     if (table->count >= table->capacity) {
-        table->capacity *= 2;
+        new_cap = (table->capacity == 0) ? 4 : table->capacity * 2;
         newMacros = realloc(table->macros, table->capacity * sizeof(Mcro));
         if (newMacros == NULL) {
             return FAILURE;
         }
         table->macros = newMacros;
+        table->capacity  = new_cap;
     }
 
     /*Add new macro*/

@@ -33,11 +33,11 @@ int main (int argc, char *argv[]) {
 			return FAILURE;
 	}
 
-	for (i = 1 ; i < argc ; i++) {		/* loop on the files given in the command line as input */
-		if (process_one_file_pass1(argv[i]) != SUCCESS) 	/* !!!now start process_one_file_pass1 on each file!!! */
-			any_failed = 1;
+/*	for (i = 1 ; i < argc ; i++) {		/* loop on the files given in the command line as input */
+/*		if (process_one_file_pass1(argv[i]) != SUCCESS) 	/* !!!now start process_one_file_pass1 on each file!!! */
+/*			any_failed = 1;
 	}
-
+*/
 	return any_failed ? FAILURE : SUCCESS;	
 }
 

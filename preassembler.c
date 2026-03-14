@@ -21,7 +21,7 @@ int run_preassembler(McroTable *table, const char *base_name) {
     int  in_macro = FALSE ;
     int  line_number = 0;
     int  status = SUCCESS;
-    Mcro *current_mcro = NULL;
+    int current_mcro = -1;
     Mcro *found = NULL;
 
     if (table == NULL || base_name == NULL)
@@ -53,7 +53,6 @@ int run_preassembler(McroTable *table, const char *base_name) {
         if (find_mcro(line) == SUCCESS && find_mcroend(line) == FAILURE) {
             if (validate_start_mcro(line, line_number) == FAILURE) {
                 status = FAILURE;
-                continue;
             }
 
             /* Step 4: raise "in macro" flag */
@@ -64,9 +63,8 @@ int run_preassembler(McroTable *table, const char *base_name) {
                 printError(FAILURE_IN_ADDIND_MACRO_TO_TABLE, line_number);
                 status = FAILURE;
                 in_macro = 0;
-                continue;
             }
-            current_mcro = searchMcro(table, extract_mcro_name(line));
+            current_mcro = table->count - 1;
             continue; /* declaration line not written to output */
         }
 
@@ -76,17 +74,16 @@ int run_preassembler(McroTable *table, const char *base_name) {
             if (find_mcroend(line) == SUCCESS) {
                 if (validate_end_mcro(line, line_number) == FAILURE) {
                     status = FAILURE;
-                    continue;
                 }
 
                 /* Step 8: turn off flag */
                 in_macro = FALSE;
-                current_mcro = NULL;
+                current_mcro = -1;
                 continue; /* mcroend line not written to output */
             }
 
             /* Step 6: accumulate into macro content */
-            if (addContent(current_mcro, line) == FAILURE)
+            if (addContent(&table->macros[current_mcro], line) == FAILURE)
                 status = FAILURE;
             continue; /* body line not written to output */
         }
