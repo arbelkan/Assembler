@@ -4,10 +4,6 @@ MAIN:   add r3, LIST
         inc r6
         mov r3, K
         mcroend
-        add r3, LIST
-        mcro arBel
-        mov r6, 8
-        mcroend
 LOOP:   prn #48
         GEN_MC
         sub r1, r4
@@ -15,7 +11,6 @@ LOOP:   prn #48
         cmp val1, #-6
         bne %END
         dec K
-        arbel12_
         jmp %LOOP
 END:    stop
 STR:    .string “abcd”

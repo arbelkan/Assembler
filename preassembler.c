@@ -11,6 +11,7 @@
 static const char *skip_spaces(const char *p);
 static void get_first_token(const char *line, char *token, int token_size);
 
+/* runs preassembler process */
 int run_preassembler(McroTable *table, const char *base_name) {
     FILE *input = NULL;
     FILE *output = NULL;
@@ -101,6 +102,11 @@ int run_preassembler(McroTable *table, const char *base_name) {
     /* Step 9: close files */
     fclose(input);
     fclose(output);
+
+    /* if any error occurred — delete the .am file */
+    if (status == FAILURE) {
+        remove(out_name);
+    }
 
     return status;
 }

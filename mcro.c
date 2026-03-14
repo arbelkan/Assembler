@@ -123,27 +123,23 @@ int addMcro(McroTable *table, const char *name) {
     Mcro *newMacros = NULL;
     int new_cap;
 
-    if (table == NULL || name == NULL) {
+    if (table == NULL || name == NULL)
         return FAILURE;
-    }
 
-    /*Expand table if necessary*/
+    /* Expand table if necessary */
     if (table->count >= table->capacity) {
         new_cap = (table->capacity == 0) ? 4 : table->capacity * 2;
-        newMacros = realloc(table->macros, table->capacity * sizeof(Mcro));
-        if (newMacros == NULL) {
+        newMacros = (Mcro *)realloc(table->macros, new_cap * sizeof(Mcro));
+        if (newMacros == NULL)
             return FAILURE;
-        }
         table->macros = newMacros;
-        table->capacity  = new_cap;
+        table->capacity = new_cap;
     }
 
     /*Add new macro*/
-    if (table->macros == NULL) {
-        table->macros = malloc(table->capacity * sizeof(Mcro));
-    }
-
     table->macros[table->count] = initMcro(name);
+    if (table->macros[table->count].name == NULL || table->macros[table->count].content == NULL)
+        return FAILURE;
 
     table->count++;
     return SUCCESS;
