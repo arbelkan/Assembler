@@ -33,9 +33,9 @@ int addContent(Mcro *mcro, const char *content);
 
 /**
  * Initialize an empty macro table
- * @return pointer to new McroTable, NULL on failure
+ * @param table - pointer to new McroTable
  */
-McroTable* initMcrotable();
+void initMcrotable(McroTable *table);
 
 /**
  * Free all memory allocated for macro table

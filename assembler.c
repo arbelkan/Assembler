@@ -5,7 +5,8 @@
 #include "pass1.h"
 #include "code_image.h"
 #include "data_image.h"
-/* #include "preassembler.h" */
+#include "mcro.h"
+#include "preassembler.h"
 
 #define SUCCESS 0
 #define FAILURE 1
@@ -15,7 +16,7 @@
 static void print_usage(const char *prog);
 static void make_filename(char *out, int out_size, const char *base, const char *ext);
 static int process_one_file_pass1(const char *base_name);
-/* static int process_one_file_preassembler(const char *base_name); */
+static int process_one_file_preassembler(const char *base_name);
 
 int main (int argc, char *argv[]) {
 	int i;
@@ -25,7 +26,13 @@ int main (int argc, char *argv[]) {
 		print_usage(argv[0]);
 		return FAILURE;
 	}
-	
+
+	/* loop on the files given in the command line as input */
+	for (i = 1 ; i < argc ; i++) {
+		if (process_one_file_preassembler(argv[i]) != SUCCESS) /* checks if preassmbler proccess has failed */
+			return FAILURE;
+	}
+
 	for (i = 1 ; i < argc ; i++) {		/* loop on the files given in the command line as input */
 		if (process_one_file_pass1(argv[i]) != SUCCESS) 	/* !!!now start process_one_file_pass1 on each file!!! */
 			any_failed = 1;
@@ -33,15 +40,19 @@ int main (int argc, char *argv[]) {
 
 	return any_failed ? FAILURE : SUCCESS;	
 }
-/*
-static int process_one_file_preassembler(const char *base_name) {
-	char am_file[MAX_PATH];
-	make_filename(am_file, MAX_PATH, base_name, ".am");
-	int line_number = 1;
-	McroTable table = initMcroTable();
 
+static int process_one_file_preassembler(const char *base_name) {
+	McroTable table;
+	int status;
+
+	initMcrotable(&table); /* initialize an empty mcro table */
+	status = run_preassembler(&table, base_name);
+
+	/* clean up */
+	freeMcrotable(&table);
+	return status;
 }
-*/
+
 static int process_one_file_pass1(const char *base_name) {
 	char am_file[MAX_PATH];
 	AsmState st;

@@ -30,14 +30,25 @@ int addContent(Mcro *mcro, const char *content)
 }
 
 /**
+ * Print the expanded macro to output
+ * Prints the macro name and its full content
+ */
+void printMcro(Mcro *mcro, FILE *output) {
+    if (mcro == NULL || output == NULL) {
+        return;
+    }
+
+    fprintf(output, "%s\n", mcro->content);
+}
+
+/**
  * Initialize an empty macro table
  */
-McroTable* initMcrotable() {
-    McroTable *table = malloc(sizeof(McroTable));
+void initMcrotable(McroTable *table) {
     table->macros = NULL;
     table->count = 0;
     table->capacity = 0;
-    return table;
+    return;
 }
 
 /**
@@ -107,16 +118,4 @@ int addMcro(McroTable *table, const char *name) {
 
     table->count++;
     return SUCCESS;
-}
-
-/**
- * Print the expanded macro to output
- * Prints the macro name and its full content
- */
-void print_mcro(Mcro *mcro, FILE *output) {
-    if (mcro == NULL || output == NULL) {
-        return;
-    }
-
-    fprintf(output, "%s\n", mcro->content);
 }

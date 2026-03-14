@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -Wall -ansi -pedantic
 
 TARGET = assembler
-OBJS = assembler.o asm_state.o pass1.o line_reader.o parser.o pass1_directives.o symbols.o ops.o operand.o pass1_instructions.o code_image.o encoder.o data_image.o errors.o mcro.o handle_files.o preassembler_parser.o
+OBJS = assembler.o asm_state.o pass1.o line_reader.o parser.o pass1_directives.o symbols.o ops.o operand.o pass1_instructions.o code_image.o encoder.o data_image.o errors.o mcro.o handle_files.o preassembler_parser.o preassembler.o
 
 all: $(TARGET)
 
@@ -59,6 +59,9 @@ handle_files.o: defs.h
 
 preassembler_parser.o: preassembler_parser.c preassembler_parser.h ops.h errors.h
 	$(CC) $(CFLAGS) -c preassembler_parser.c
+
+preassembler.o: preassembler.c preassembler.h preassembler_parser.h errors.h handle_files.h defs.h mcro.h
+	$(CC) $(CFLAGS) -c preassembler.c
 
 clean:
 	rm -f $(OBJS) $(TARGET)
