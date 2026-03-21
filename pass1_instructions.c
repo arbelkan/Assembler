@@ -89,7 +89,10 @@ int pass1_handle_instruction(AsmState *st, const ParsedLine *pl, int line_no) {
 		}
 		else {
 			/* TODO: fixups_add(&st->fixups, next_addr, FIX_DIRECT/FIX_REL, src.label, line_no); */
-			extra = encode_placeholder(); /* temporary. TODO: delete after fixups module integration */
+			/* was: extra = encode_placeholder(); */
+			if (fixups_add(&st->fixups, next_addr, src.mode, src.label) != SUCCESS)
+				return FAILURE;
+			extra = encode_placeholder();
 		}
 
 		if (code_image_emit(&st->code, next_addr, extra) != SUCCESS) {
@@ -110,7 +113,10 @@ int pass1_handle_instruction(AsmState *st, const ParsedLine *pl, int line_no) {
 		}
 		else {
 			/* TODO: fixups_add(&st->fixups, next_addr, FIX_DIRECT/FIX_REL, dst.label, line_no); */
-			extra = encode_placeholder(); /* temporary. TODO: delete after fixups module integration */
+			/* was: extra = encode_placeholder(); */
+			if (fixups_add(&st->fixups, next_addr, dst.mode, dst.label) != SUCCESS)
+				return FAILURE;
+			extra = encode_placeholder();
 		}
 
 		if (code_image_emit(&st->code, next_addr, extra) != SUCCESS) {

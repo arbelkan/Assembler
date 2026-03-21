@@ -30,8 +30,7 @@ static char* errors[ERR_MAX] = {
 /**
 * printing error and its line using error code
 **/
-unsigned int printError(unsigned int errorCode, unsigned int lineNumber)
-{
+unsigned int printError(unsigned int errorCode, unsigned int lineNumber){
     printf("error in line %u: %s\n", lineNumber, errors[errorCode]);
     return errorCode;
 }
