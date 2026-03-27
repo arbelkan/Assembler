@@ -41,6 +41,7 @@ int main (int argc, char *argv[]) {
         asm_state_init(&st, argv[i]);
 
         if (process_one_file_pass1(&st, argv[i]) == SUCCESS) {
+			printf("Debug: pass1 completed successfully.\n"); /* temporary debug - TODO: remove after testing */
             process_one_file_pass2(&st, argv[i]);
         } else {
             any_failed = 1;
@@ -70,7 +71,7 @@ static int process_one_file_pass1(AsmState *st, const char *base_name) {
 	int ok;
 
 	make_filename(am_file, MAX_PATH, base_name, ".am");
-	asm_state_init(st, base_name); 	/* initial work state of pass1 to the current AsmState st */
+	/* asm_state_init(st, base_name); 	/* initial work state of pass1 to the current AsmState st */
 	
 	ok = pass1_run(st, am_file); 	/* !!!now start pass1 on AsmState st and create its output in am_file!!! */
 
@@ -93,7 +94,6 @@ static int process_one_file_pass1(AsmState *st, const char *base_name) {
 static int process_one_file_pass2(AsmState *st, const char *base_name) {
 	int status = pass2_run(st, base_name);
 
-    asm_state_finish_pass1(st);
 	code_image_dump(&st->code); /* temporary debug. TODO: delete after testing*/
 	data_image_dump(&st->data, st->ICF); /* temporary debug. TODO: delete after testing*/
 	symbols_dump(&st->symbols); /* temporary debug. TODO: delete after testing*/

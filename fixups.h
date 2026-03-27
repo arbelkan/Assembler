@@ -18,6 +18,7 @@ typedef struct {
     int address; /* code image address to patch */
     AddrMode mode; /* ADDR_DIRECT or ADDR_RELATIVE */
     char label[SYMBOL_NAME_MAX + 1]; /* referenced symbol name */
+    int line_number; /* line number in file */
 } Fixup;
 
 /*
@@ -47,7 +48,7 @@ void fixups_free(FixupTable *ft);
  * @param lable - the lable name of the new fixup
  * @return SUCCESS or FAILURE (on allocation error).
  */
-int fixups_add(FixupTable *ft, int address, AddrMode mode, const char *label);
+int fixups_add(FixupTable *ft, int address, AddrMode mode, const char *label, int line_number);
 
 /* Debug helper: print fixup table to stdout.
  * @param ft - the FixupTable to be printed

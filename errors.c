@@ -18,7 +18,7 @@ static char* errors[ERR_MAX] = {
     "colons not adjacent to symbol",
     "symbol already defines",
     "decleration both for macro and symbol",
-    "symbol not defines",
+    "symbol not defined",
     "illegal number",
     "unkown instruction",
     "unkown register",

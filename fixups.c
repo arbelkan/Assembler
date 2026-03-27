@@ -26,7 +26,7 @@ void fixups_free(FixupTable *ft) {
 }
 
 /* Add a new fixup entry table */
-int fixups_add(FixupTable *ft, int address, AddrMode mode, const char *label) {
+int fixups_add(FixupTable *ft, int address, AddrMode mode, const char *label, int line_number) {
     Fixup *entry;
 
     if (ft == NULL || label == NULL)
@@ -38,6 +38,7 @@ int fixups_add(FixupTable *ft, int address, AddrMode mode, const char *label) {
     entry = &ft->arr[ft->count];
     entry->address = address;
     entry->mode = mode;
+    entry->line_number = line_number;
 
     strncpy(entry->label, label, SYMBOL_NAME_MAX);
     entry->label[SYMBOL_NAME_MAX] = '\0';
