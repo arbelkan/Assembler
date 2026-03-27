@@ -10,6 +10,7 @@
 #include "word.h"
 #include "ops.h"
 #include "errors.h"
+#include "create_output_files.h"
 
 /* Internal helpers */
 static int handle_entry_directive(AsmState *st, const ParsedLine *pl, int line_number);
@@ -76,7 +77,7 @@ int pass2_run(AsmState *st, const char *am_filename) {
     }
 
 	/* step 7 - create output files */
-    /* TODO- output creation function module and functions */
+    create_output_files(st);
     return ok;
 }
 

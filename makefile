@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -Wall -ansi -pedantic
 
 TARGET = assembler
-OBJS = assembler.o asm_state.o pass1.o line_reader.o parser.o pass1_directives.o symbols.o ops.o operand.o pass1_instructions.o code_image.o encoder.o data_image.o errors.o mcro.o handle_files.o preassembler_parser.o preassembler.o fixups.o pass2.o
+OBJS = assembler.o asm_state.o pass1.o line_reader.o parser.o pass1_directives.o symbols.o ops.o operand.o pass1_instructions.o code_image.o encoder.o data_image.o errors.o mcro.o handle_files.o preassembler_parser.o preassembler.o fixups.o pass2.o create_output_files.o
 
 all: $(TARGET)
 
@@ -66,8 +66,11 @@ preassembler.o: preassembler.c preassembler.h preassembler_parser.h errors.h han
 fixups.o: fixups.c fixups.h symbols.h ops.h defs.h
 	$(CC) $(CFLAGS) -c fixups.c
 
-pass2.o: pass2.c pass2.h defs.h asm_state.h handle_files.h line_reader.h parser.h symbols.h fixups.h code_image.h word.h ops.h errors.h
+pass2.o: pass2.c pass2.h defs.h asm_state.h handle_files.h line_reader.h parser.h symbols.h fixups.h code_image.h word.h ops.h errors.h create_output_files.h
 	$(CC) $(CFLAGS) -c pass2.c
+
+create_output_files.o : create_output_files.c create_output_files.h asm_state.h handle_files.h symbols.h defs.h
+	$(CC) $(CFLAGS) -c create_output_files.c
 
 clean:
 	rm -f $(OBJS) $(TARGET)
