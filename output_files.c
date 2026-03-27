@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "create_output_files.h"
+#include "output_files.h"
 
 /* internal helpers */
 static void word_to_hex(unsigned int value, char *out);

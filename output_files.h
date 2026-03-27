@@ -1,5 +1,5 @@
-#ifndef CREATE_OUTPUT_FILES_H
-#define CREATE_OUTPUT_FILES_H
+#ifndef OUTPUT_FILES_H
+#define OUTPUT_FILES_H
 
 #include "asm_state.h"
 #include "handle_files.h"

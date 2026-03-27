@@ -10,7 +10,7 @@
 #include "word.h"
 #include "ops.h"
 #include "errors.h"
-#include "create_output_files.h"
+#include "output_files.h"
 
 /* Internal helpers */
 static int handle_entry_directive(AsmState *st, const ParsedLine *pl, int line_number);
