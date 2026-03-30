@@ -33,7 +33,6 @@ int pass1_run(AsmState *st, const char *am_filename) {
 
 	while ((rc = read_line(fp , line, (int)sizeof(line), &line_no, &too_long)) == LR_OK) {
 		if (too_long) {
-			/* TODO:route this through the shared errors module (Arbel) */	
 			printf("Error: line %d is longer than %d characters\n", line_no, LINE_MAX);	
 		}
 		if (is_blank_or_comment(line)) {

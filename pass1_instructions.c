@@ -89,7 +89,7 @@ int pass1_handle_instruction(AsmState *st, const ParsedLine *pl, int line_no) {
 		}
 		else {
 			/* TODO: fixups_add(&st->fixups, next_addr, FIX_DIRECT/FIX_REL, src.label, line_no); */
-			extra = encode_placeholder(); /* temporary. TODO: delete after fixups module integration */
+			extra = encode_placeholder(); 
 		}
 
 		if (code_image_emit(&st->code, next_addr, extra) != SUCCESS) {
@@ -110,7 +110,7 @@ int pass1_handle_instruction(AsmState *st, const ParsedLine *pl, int line_no) {
 		}
 		else {
 			/* TODO: fixups_add(&st->fixups, next_addr, FIX_DIRECT/FIX_REL, dst.label, line_no); */
-			extra = encode_placeholder(); /* temporary. TODO: delete after fixups module integration */
+			extra = encode_placeholder(); 
 		}
 
 		if (code_image_emit(&st->code, next_addr, extra) != SUCCESS) {
@@ -270,28 +270,4 @@ static int validate_addressing(const OpInfo *op, const Operand *src, const Opera
 
 	return SUCCESS;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

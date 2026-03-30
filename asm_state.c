@@ -22,7 +22,7 @@ void asm_state_init(AsmState *st, const char *base_name) {
 	st->data.count = 0;
 	data_image_init(&st->data);
 
-	/* initialize symbol table (SymbolTable symbols) - placeholder for now*/ 
+	/* initialize symbol table (SymbolTable symbols) */ 
 	symbols_init(&st->symbols);
 
 	/* store base file name safely */
@@ -44,12 +44,7 @@ void asm_state_finish_pass1(AsmState *st) {
 	st->DCF = st->DC;
 
 	symbols_relocate_data(&st->symbols, st->ICF);
-	/*
-	* TODO (later): relocate all DATA symbols by adding ICF:
-	* symbols_relocate_data(&st->symbols, st->ICF);
-	*
-	* This is required because data addresses come after the code image.
-	*/
+	
 }
 
 /* free sources */
