@@ -71,7 +71,7 @@ int pass1_handle_instruction(AsmState *st, const ParsedLine *pl, int line_no) {
 	first = encode_first_word(op, src_mode, dst_mode);
 	
 	/* emit first word at current IC address */
-	if (code_image_emit(&st->code, st->IC, first) != SUCCESS) {
+	if (asm_state_emit_code(st, st->IC, first) != SUCCESS) {
 		printf("Error (line %d): failed to emit code word at address: %d\n", line_no, st->IC);
 		return FAILURE;
 	}
@@ -92,7 +92,7 @@ int pass1_handle_instruction(AsmState *st, const ParsedLine *pl, int line_no) {
 			extra = encode_placeholder(); 
 		}
 
-		if (code_image_emit(&st->code, next_addr, extra) != SUCCESS) {
+		if (asm_state_emit_code(st, next_addr, extra) != SUCCESS) {
 			printf("Error (line %d): failed to emit operand word at address: %d\n", line_no, next_addr);
 			return FAILURE;
 		}

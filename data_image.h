@@ -4,7 +4,7 @@
 #include "defs.h"
 #include "word.h"
 
-#define MAX_DATA_WORDS 2048
+#define MAX_DATA_WORDS MAX_TOTAL_WORDS
 
 
 typedef struct {

@@ -31,4 +31,8 @@ void asm_state_init(AsmState *st, const char *base_name);
 void asm_state_finish_pass1(AsmState *st);
 void asm_state_free(AsmState *st);
 
+/* Emit helpers that enforce the global memory limit (code + data <= MAX_TOTAL_WORDS). */
+int asm_state_emit_code(AsmState *st, int address, Word w);
+int asm_state_emit_data(AsmState *st, unsigned int value);
+
 #endif

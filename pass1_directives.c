@@ -118,7 +118,7 @@ static int handle_entry(AsmState *st, const ParsedLine *pl, int line_no) {
 static int emit_data_word(AsmState *st, unsigned int value, int line_no) {
 	(void)line_no;
 
-	if (data_image_emit(&st->data, value) != SUCCESS) return FAILURE;
+	if (asm_state_emit_data(st, value) != SUCCESS) return FAILURE;
 
 	st->DC++;
 

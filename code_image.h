@@ -4,7 +4,7 @@
 #include "defs.h"
 #include "word.h"
 
-#define MAX_CODE_WORDS 2048
+#define MAX_CODE_WORDS MAX_TOTAL_WORDS
 
 typedef struct {
 	Word words[MAX_CODE_WORDS];
