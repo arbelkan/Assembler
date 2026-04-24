@@ -1,9 +1,9 @@
 MAIN:   add r3, LIST
-        mcro GEN_MC
+        mcro GEN_MC 123
         lea STR, r6
         inc r6
         mov r3, K
-        mcroend
+        ! mcroend
 LOOP:   prn #48
         GEN_MC
         sub r1, r4

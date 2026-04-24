@@ -18,6 +18,7 @@ int pass1_run(AsmState *st, const char *am_filename) {
 	int line_no = 0;
 	int too_long = 0;
 	int rc;		/* rc get the end code (status) from read_line process */
+	int ok = SUCCESS;
 	ParsedLine pl;
 
 	if (st == NULL || am_filename == NULL) {
@@ -35,12 +36,14 @@ int pass1_run(AsmState *st, const char *am_filename) {
 		if (too_long) {
 			/* TODO:route this through the shared errors module (Arbel) */	
 			printf("Error: line %d is longer than %d characters\n", line_no, LINE_MAX);
+			ok = FAILURE;
 		}
 		if (is_blank_or_comment(line)) {
 			continue;
 		}
 		if (parse_line(line, &pl) != SUCCESS) {
 			printf("Parse error at line %d: %s\n", line_no, line);
+			ok = FAILURE;
 			continue;
 		}
 
@@ -48,6 +51,7 @@ int pass1_run(AsmState *st, const char *am_filename) {
 			if (pass1_handle_directive(st, &pl, line_no) != SUCCESS) {
 				/* directive handler already printed an error */
 				/* keep going to find more errors */
+				ok = FAILURE;
 			}
 			else {
 				/* Temporary debug: show DC/data count after directive */
@@ -59,6 +63,7 @@ int pass1_run(AsmState *st, const char *am_filename) {
 				/* pass1_handle_instruction already printed an error */
 				/* keep going to find more errors */
 				/* TODO: make sure that empty if block doesnt cause bugs */
+				ok = FAILURE;
 			}
 		}
 		else { /* empty/comment shouldn't reach here due to filtering; ignore */ }			
@@ -71,7 +76,7 @@ int pass1_run(AsmState *st, const char *am_filename) {
 	}
 
 	fclose(fp);
-	return SUCCESS;
+	return ok;
 }
 
 

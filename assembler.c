@@ -32,19 +32,19 @@ int main (int argc, char *argv[]) {
 
 	/* loop on the files given in the command line as input */
     for (i = 1; i < argc; i++) {
-		if (process_one_file_preassembler(argv[i]) != SUCCESS) /* checks if preassmbler proccess has failed */
-		return FAILURE;
+		if (process_one_file_preassembler(argv[i]) == SUCCESS) { /* checks if preassmbler proccess has failed */
+		    asm_state_init(&st, argv[i]);
 
-        asm_state_init(&st, argv[i]);
-
-        if (process_one_file_pass1(&st, argv[i]) == SUCCESS) {
+        	if (process_one_file_pass1(&st, argv[i]) == SUCCESS) {
 			printf("Debug: pass1 completed successfully.\n"); /* temporary debug - TODO: remove after testing */
             process_one_file_pass2(&st, argv[i]);
-        } else {
-            any_failed = 1;
-        }
+       		 } else {
+         	   any_failed = 1;
+       		 }
 
-        asm_state_free(&st);
+        	asm_state_free(&st);
+		}
+		any_failed = 1;
     }
 
 	return any_failed ? FAILURE : SUCCESS;	
