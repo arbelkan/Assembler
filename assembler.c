@@ -16,7 +16,7 @@
 
 static void print_usage(const char *prog);
 static void make_filename(char *out, int out_size, const char *base, const char *ext);
-/* static int process_one_file_preassembler(const char *base_name); */
+static int process_one_file_preassembler(const char *base_name);
 static int process_one_file_pass1(AsmState *st, const char *base_name);
 static int process_one_file_pass2(AsmState *st, const char *base_name);
 
@@ -31,13 +31,10 @@ int main (int argc, char *argv[]) {
 	}
 
 	/* loop on the files given in the command line as input */
-/*	for (i = 1 ; i < argc ; i++) {
-	/*	if (process_one_file_preassembler(argv[i]) != SUCCESS) /* checks if preassmbler proccess has failed */
-/*			return FAILURE;
-	}
-*/
-	/* pass1 + pass2 on every file */
     for (i = 1; i < argc; i++) {
+		if (process_one_file_preassembler(argv[i]) != SUCCESS) /* checks if preassmbler proccess has failed */
+		return FAILURE;
+
         asm_state_init(&st, argv[i]);
 
         if (process_one_file_pass1(&st, argv[i]) == SUCCESS) {
@@ -52,26 +49,26 @@ int main (int argc, char *argv[]) {
 
 	return any_failed ? FAILURE : SUCCESS;	
 }
-/*
+
 static int process_one_file_preassembler(const char *base_name) {
 	McroTable table;
 	int status;
 
 	initMcrotable(&table); /* initialize an empty mcro table */
-/*	status = run_preassembler(&table, base_name); */
+	status = run_preassembler(&table, base_name);
 
 	/* clean up */
-/*	freeMcrotable(&table);
+	freeMcrotable(&table);
 	return status;
-}*/
+}
 
 static int process_one_file_pass1(AsmState *st, const char *base_name) {
 	char am_file[MAX_PATH];
-	/* AsmState st; */
+	/* AsmState st; TODO - delete after integration */
 	int ok;
 
 	make_filename(am_file, MAX_PATH, base_name, ".am");
-	/* asm_state_init(st, base_name); 	/* initial work state of pass1 to the current AsmState st */
+	/* asm_state_init(st, base_name);/* initial work state of pass1 to the current AsmState st TODO - delete after integration */
 	
 	ok = pass1_run(st, am_file); 	/* !!!now start pass1 on AsmState st and create its output in am_file!!! */
 
