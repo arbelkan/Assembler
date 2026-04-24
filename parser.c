@@ -121,7 +121,8 @@ int is_valid_label(const char *s) {
 	len = (int)strlen(s);
 	if (len > MAX_LABEL_LEN) { return 0; }
 	
-	for (i = 1 ; i < len ; i++) {
+	if (!isalpha((unsigned char)s[0])) { return 0; }  /* first char must be letter */
+	for (i = 1; i < len; i++) {
 		if (!isalnum((unsigned char)s[i])) { return 0; }
 	}
 

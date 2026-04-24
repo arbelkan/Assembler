@@ -48,7 +48,7 @@ static int create_ob_file(AsmState *st) {
 
     /* code image words */
     addr = IC_INIT;
-    for (i = 0; i < st->ICF; i++, addr++) {
+    for (i = 0; i < st->ICF - IC_INIT; i++, addr++) {
         word_to_hex(st->code.words[i].value, hex);
         fprintf(fp, "%04d %s %c\n", addr, hex, st->code.words[i].are);
     }

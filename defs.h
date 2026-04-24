@@ -5,7 +5,7 @@
 #define FAILURE 1
 #define IC_INIT 100
 
-#define TRUE  1
+#define TRUE 1
 #define FALSE 0
 
 #define MEM_SIZE 4096

@@ -4,6 +4,7 @@ int read_line(FILE *fp, char *out, int out_size, int *line_no, int *too_long) {
 	int c;
 	int i = 0;
 	int long_line = 0;
+	int next;
 
 	if (fp == NULL || out == NULL || out_size <= 1 || line_no == NULL || too_long == NULL) return LR_FAIL;
 	
@@ -23,6 +24,11 @@ int read_line(FILE *fp, char *out, int out_size, int *line_no, int *too_long) {
 		if (i < (out_size - 1)) out[i++] = (char)c;
 		else long_line = 1;	/* buffer full, so mark long_line and keep consuming untill EOF */
 		c = fgetc(fp);    /* c get the next char in the line */
+	}
+
+	if (c == '\r') {
+		next = fgetc(fp);
+		if (next != '\n') ungetc(next, fp);  /* push back if not \n */
 	}
 
 	out[i] = '\0';

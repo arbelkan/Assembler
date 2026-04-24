@@ -8,6 +8,7 @@
 #include "symbols.h"
 #include "encoder.h"
 #include "code_image.h"
+#include "fixups.h"
 
 static const char *skip_spaces_local(const char *p);
 static int parse_operands(const char *args, unsigned int expected_ops, Operand *src, Operand *dst, int line_no);
@@ -88,15 +89,15 @@ int pass1_handle_instruction(AsmState *st, const ParsedLine *pl, int line_no) {
 			extra = encode_register(src.reg_num);
 		}
 		else {
-			/* TODO: fixups_add(&st->fixups, next_addr, FIX_DIRECT/FIX_REL, src.label, line_no); */
-			extra = encode_placeholder(); /* temporary. TODO: delete after fixups module integration */
+			fixups_add(&st->fixups, next_addr, src.mode, src.label, line_no);
+			extra = encode_placeholder();
 		}
 
 		if (code_image_emit(&st->code, next_addr, extra) != SUCCESS) {
 			printf("Error (line %d): failed to emit operand word at address: %d\n", line_no, next_addr);
 			return FAILURE;
 		}
-			
+
 		next_addr++;
 	}
 
@@ -109,8 +110,8 @@ int pass1_handle_instruction(AsmState *st, const ParsedLine *pl, int line_no) {
 			extra = encode_register(dst.reg_num);
 		}
 		else {
-			/* TODO: fixups_add(&st->fixups, next_addr, FIX_DIRECT/FIX_REL, dst.label, line_no); */
-			extra = encode_placeholder(); /* temporary. TODO: delete after fixups module integration */
+			fixups_add(&st->fixups, next_addr, dst.mode, dst.label, line_no);
+			extra = encode_placeholder();
 		}
 
 		if (code_image_emit(&st->code, next_addr, extra) != SUCCESS) {

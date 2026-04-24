@@ -64,11 +64,9 @@ static int process_one_file_preassembler(const char *base_name) {
 
 static int process_one_file_pass1(AsmState *st, const char *base_name) {
 	char am_file[MAX_PATH];
-	/* AsmState st; TODO - delete after integration */
 	int ok;
 
 	make_filename(am_file, MAX_PATH, base_name, ".am");
-	/* asm_state_init(st, base_name);/* initial work state of pass1 to the current AsmState st TODO - delete after integration */
 	
 	ok = pass1_run(st, am_file); 	/* !!!now start pass1 on AsmState st and create its output in am_file!!! */
 
@@ -78,8 +76,6 @@ static int process_one_file_pass1(AsmState *st, const char *base_name) {
 		data_image_dump(&st->data, st->ICF); /* temporary debug. TODO: delete after testing*/
 		symbols_dump(&st->symbols); /* temporary debug. TODO: delete after testing*/
 	}
-	
-	/* asm_state_free(&st); */
 
 	if (ok == FAILURE) {
 		printf("Error: failed processing %s\n", am_file); 	/* TODO: later: replace all ERROR MSG to error module */
