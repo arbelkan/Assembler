@@ -27,6 +27,10 @@ void asm_state_init(AsmState *st, const char *base_name) {
 	/* initialize symbol table (SymbolTable symbols) */ 
 	symbols_init(&st->symbols);
 
+	/* TODO - documentation for Shahr what has changed */
+	/* initialize fixups table*/
+	fixups_init(&st->fixups);
+
 	/* store base file name safely */
 	if (base_name != NULL) {
 		strncpy(st->base_name, base_name, (size_t)(sizeof(st->base_name) - 1));
@@ -66,6 +70,8 @@ void asm_state_free(AsmState *st) {
 	if (st == NULL) return;
 
 	symbols_free(&st->symbols);
+
+	fixups_free(&st->fixups); /* TODO - documentation for Shahr what has changed */
 
 	/*
 	*

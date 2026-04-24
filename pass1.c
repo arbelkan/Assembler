@@ -19,6 +19,7 @@ int pass1_run(AsmState *st, const char *am_filename) {
 	int too_long = 0;
 	int rc;		/* rc get the end code (status) from read_line process */
 	ParsedLine pl;
+	int ok = SUCCESS; /* TODO - document change because of false success */
 
 	if (st == NULL || am_filename == NULL) {
 		printf("Error: invalid arguments to pass1_run\n");
@@ -33,13 +34,16 @@ int pass1_run(AsmState *st, const char *am_filename) {
 
 	while ((rc = read_line(fp , line, (int)sizeof(line), &line_no, &too_long)) == LR_OK) {
 		if (too_long) {
-			printf("Error: line %d is longer than %d characters\n", line_no, LINE_MAX);	
+			/* TODO:route this through the shared errors module (Arbel) */	
+			printf("Error: line %d is longer than %d characters\n", line_no, LINE_MAX);
+			ok = FAILURE; /* TODO - document change because of false success */
 		}
 		if (is_blank_or_comment(line)) {
 			continue;
 		}
 		if (parse_line(line, &pl) != SUCCESS) {
 			printf("Parse error at line %d: %s\n", line_no, line);
+			ok = FAILURE; /* TODO - document change because of false success */
 			continue;
 		}
 

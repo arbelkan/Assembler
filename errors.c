@@ -18,7 +18,7 @@ static char* errors[ERR_MAX] = {
     "colons not adjacent to symbol",
     "symbol already defines",
     "decleration both for macro and symbol",
-    "symbol not defines",
+    "symbol not defined",
     "illegal number",
     "unkown instruction",
     "unkown register",
@@ -30,8 +30,7 @@ static char* errors[ERR_MAX] = {
 /**
 * printing error and its line using error code
 **/
-unsigned int printError(unsigned int errorCode, unsigned int lineNumber)
-{
+unsigned int printError(unsigned int errorCode, unsigned int lineNumber){
     printf("error in line %u: %s\n", lineNumber, errors[errorCode]);
     return errorCode;
 }

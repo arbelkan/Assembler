@@ -8,6 +8,7 @@
 #include "word.h"
 #include "code_image.h"
 #include "data_image.h"
+#include "fixups.h" /* TODO - documentation for Shahr what has changed */
 
 #define MAX_PATH 1024
 #define MAX_LABEL_LEN 31 	/*temporary*/
@@ -21,7 +22,7 @@ typedef struct {
 	CodeImage code;
 	DataImage data;
 	SymbolTable symbols;
-	/*Fixups fixups;*/
+	FixupTable fixups; /* TODO - documentation for Shahr what has changed */
 	char base_name[MAX_PATH];
 } AsmState;
 
