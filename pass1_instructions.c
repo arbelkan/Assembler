@@ -71,7 +71,7 @@ int pass1_handle_instruction(AsmState *st, const ParsedLine *pl, int line_no) {
 	first = encode_first_word(op, src_mode, dst_mode);
 	
 	/* emit first word at current IC address */
-	if (code_image_emit(&st->code, st->IC, first) != SUCCESS) {
+	if (asm_state_emit_code(st, st->IC, first) != SUCCESS) {
 		printf("Error (line %d): failed to emit code word at address: %d\n", line_no, st->IC);
 		return FAILURE;
 	}
@@ -89,10 +89,10 @@ int pass1_handle_instruction(AsmState *st, const ParsedLine *pl, int line_no) {
 		}
 		else {
 			/* TODO: fixups_add(&st->fixups, next_addr, FIX_DIRECT/FIX_REL, src.label, line_no); */
-			extra = encode_placeholder(); /* temporary. TODO: delete after fixups module integration */
+			extra = encode_placeholder(); 
 		}
 
-		if (code_image_emit(&st->code, next_addr, extra) != SUCCESS) {
+		if (asm_state_emit_code(st, next_addr, extra) != SUCCESS) {
 			printf("Error (line %d): failed to emit operand word at address: %d\n", line_no, next_addr);
 			return FAILURE;
 		}
@@ -110,7 +110,7 @@ int pass1_handle_instruction(AsmState *st, const ParsedLine *pl, int line_no) {
 		}
 		else {
 			/* TODO: fixups_add(&st->fixups, next_addr, FIX_DIRECT/FIX_REL, dst.label, line_no); */
-			extra = encode_placeholder(); /* temporary. TODO: delete after fixups module integration */
+			extra = encode_placeholder(); 
 		}
 
 		if (code_image_emit(&st->code, next_addr, extra) != SUCCESS) {
@@ -270,28 +270,4 @@ static int validate_addressing(const OpInfo *op, const Operand *src, const Opera
 
 	return SUCCESS;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

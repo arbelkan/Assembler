@@ -118,7 +118,7 @@ static int handle_entry(AsmState *st, const ParsedLine *pl, int line_no) {
 static int emit_data_word(AsmState *st, unsigned int value, int line_no) {
 	(void)line_no;
 
-	if (data_image_emit(&st->data, value) != SUCCESS) return FAILURE;
+	if (asm_state_emit_data(st, value) != SUCCESS) return FAILURE;
 
 	st->DC++;
 
@@ -275,14 +275,3 @@ static int parse_single_symbol(const char *args, char *out, int out_size, int li
 }
 
 
-
-/* pass1_directives.c
- * Stage 1 directive handling:
- *  - .data   : parse list of integers, emit into DataImage, update DC
- *  - .string : parse quoted string, emit chars + '\0', update DC
- *  - .extern : syntax validation only (SymbolTable TODO)
- *  - .entry  : syntax validation only (will be finalized later)
- *
- * NOTE: SymbolTable is still a placeholder in your current project state,
- * so label insertion / extern registration is left as TODO.
- */
