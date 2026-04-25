@@ -49,7 +49,7 @@ Word encode_register(int reg_num) {
 	
 	/* one-hot encoding: bit reg_num set */
 	if (reg_num < 0 || reg_num > 7) { 
-		/* should not happan because 0-7 been cheack in operand_parse */
+		/* should not happen because 0-7 been check in operand_parse */
 		w.value = 0u;
 		return w;
 	}

@@ -85,12 +85,11 @@ static int handle_entry_directive(AsmState *st, const ParsedLine *pl, int line_n
 
     /* check extern conflict before marking entry */
     if (sym != NULL && (sym->attrs & SYM_ATTR_EXTERN)) {
-        print_error(SAME_DECLERATION_FOR_BOTH_ENTRY_AND_EXTERNAL_SYMBOL, (unsigned int)line_number);
+        print_error(SAME_DECLARATION_FOR_BOTH_ENTRY_AND_EXTERNAL_SYMBOL, (unsigned int)line_number);
         return FAILURE;
     }
 
     if (symbols_mark_entry(&st->symbols, pl->args, line_number) != SUCCESS) {
-        print_error(SYMBOL_NOT_DEFINED, (unsigned int)line_number);
         return FAILURE;
     }
 
@@ -126,7 +125,7 @@ static int resolve_one_fixup(AsmState *st, const Fixup *fix) {
     }
 
     if (code_image_set(&st->code, fix->address, w) != SUCCESS) {
-        print_error(SYMBOL_NOT_DEFINED, (unsigned int)fix->line_number);
+        print_error(FAILED_TO_EMIT_CODE_WORD_AT_ADDRESS, (unsigned int)fix->line_number);
         return FAILURE;
     }
 

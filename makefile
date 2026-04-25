@@ -54,7 +54,7 @@ errors.o: errors.c errors.h
 mcro.o: mcro.c mcro.h errors.h defs.h
 	$(CC) $(CFLAGS) -c mcro.c
 
-handle_files.o: defs.h
+handle_files.o: handle_files.c handle_files.h defs.h
 	$(CC) $(CFLAGS) -c handle_files.c
 
 preassembler_parser.o: preassembler_parser.c preassembler_parser.h ops.h errors.h

@@ -13,7 +13,7 @@ static int validate_mcro_name(const char *line, int line_number);
 
 /* public */
 
-/* Find mcro decleration in line */
+/* Find mcro declaration in line */
 int find_mcro(const char *line) {
     const char *ptr = skip_spaces_internal(line);
     while (!(*ptr == '\0' || *ptr == '\n' || *ptr == '\r')) {
@@ -25,7 +25,7 @@ int find_mcro(const char *line) {
     return FAILURE;
 }
 
-/* Find mcroend decleration in line */
+/* Find mcroend declaration in line */
 int find_mcroend(const char *line) {
     const char *ptr = skip_spaces_internal(line);
     while (!(*ptr == '\0' || *ptr == '\n' || *ptr == '\r')) {
@@ -60,7 +60,7 @@ int validate_start_mcro(const char *line, int line_number) {
     char *mcro_name = extract_mcro_name(line);
 
     if (strncmp(ptr, "mcro", 4) != 0) {
-        print_error(DECLERATION_OF_MACRO_LINE_INCLUDES_EXTERNAL_CHARACTERS, line_number);
+        print_error(DECLARATION_OF_MACRO_LINE_INCLUDES_EXTERNAL_CHARACTERS, line_number);
         return FAILURE;
     }
     ptr += 4;
@@ -73,7 +73,7 @@ int validate_start_mcro(const char *line, int line_number) {
     ptr += strlen(mcro_name);
     ptr = skip_spaces_internal(ptr);
     if (!(*ptr == '\0' || *ptr == '\n' || *ptr == '\r')) {
-        print_error(DECLERATION_OF_MACRO_LINE_INCLUDES_EXTERNAL_CHARACTERS, line_number);
+        print_error(DECLARATION_OF_MACRO_LINE_INCLUDES_EXTERNAL_CHARACTERS, line_number);
         return FAILURE;
     }
     return SUCCESS;

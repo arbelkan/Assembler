@@ -28,7 +28,7 @@ int pass1_handle_directive(AsmState *st, const ParsedLine *pl, int line_no) {
 		case DIR_EXTERN: return handle_extern(st, pl, line_no);
 		case DIR_ENTRY: return handle_entry(st, pl, line_no);
 		default: 
-			print_error(UNKOWN_DIRECTIVE, line_no);
+			print_error(UNKNOWN_DIRECTIVE, line_no);
 			return FAILURE;
 	}
 }
@@ -61,7 +61,7 @@ static int handle_extern(AsmState *st, const ParsedLine *pl, int line_no) {
 
 	if (pl->has_label) {
         	/* For now we treat it as an error to be safe */
-        	print_error(LABLE_BEFORE_EXTERN_IS_NOT_ALLOWED, line_no);
+        	print_error(LABEL_BEFORE_EXTERN_IS_NOT_ALLOWED, line_no);
         	return FAILURE;
 	}
 
@@ -84,7 +84,7 @@ static int handle_entry(AsmState *st, const ParsedLine *pl, int line_no) {
 	(void)st;
 
 	if (pl->has_label) {
-		print_error(LABLE_BEFORE_ENTRY_IS_NOT_ALLOWED, line_no);
+		print_error(LABEL_BEFORE_ENTRY_IS_NOT_ALLOWED, line_no);
         	return FAILURE;
 	}
 

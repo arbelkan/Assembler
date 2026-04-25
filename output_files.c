@@ -44,7 +44,7 @@ static int create_ob_file(AsmState *st) {
         return FAILURE;
 
     /* header line: ICF (number of code words) and DCF (number of data words) */
-    fprintf(fp, "  %d %d\n", st->ICF - 100 , st->DCF);
+    fprintf(fp, "  %d %d\n", st->ICF - IC_INIT , st->DCF);
 
     /* code image words */
     addr = IC_INIT;

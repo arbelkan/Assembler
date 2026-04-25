@@ -3,6 +3,7 @@
 
 #include "symbols.h"
 #include "ops.h"
+#include "errors.h"
 
 #define FIXUPS_INIT_CAP 16
 
@@ -45,7 +46,7 @@ void fixups_free(FixupTable *ft);
  * @param ft - the FixupTable that will be expanded
  * @param address - the new fixup adrress
  * @param mode - the new fixup mode (E / R)
- * @param lable - the lable name of the new fixup
+ * @param label - the label name of the new fixup
  * @return SUCCESS or FAILURE (on allocation error).
  */
 int fixups_add(FixupTable *ft, int address, AddrMode mode, const char *label, int line_number);

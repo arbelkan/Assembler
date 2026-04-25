@@ -77,7 +77,7 @@ static int ensure_capacity(FixupTable *ft) {
     new_cap = (ft->cap == 0) ? FIXUPS_INIT_CAP : (ft->cap * 2);
     new_arr = (Fixup *)realloc(ft->arr, (size_t)new_cap * sizeof(Fixup));
     if (new_arr == NULL) {
-        printf("Error: fixups_add: memory allocation failed\n");
+        print_error_no_line(FAILURE_IN_ADDING_FIXUP_TO_TABLE);
         return FAILURE;
     }
 

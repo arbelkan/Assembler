@@ -32,7 +32,7 @@ int pass1_handle_instruction(AsmState *st, const ParsedLine *pl, int line_no) {
 	op = op_find(pl->op_name);
 
 	if (op == NULL) {
-		print_error(UNKOWN_INSTRUCTION, line_no);
+		print_error(UNKNOWN_INSTRUCTION, line_no);
 		return FAILURE;
 	}
 
@@ -243,7 +243,7 @@ static int validate_addressing(const OpInfo *op, const Operand *src, const Opera
 	if (op->operands == 1u) {
 		m = 1u << (unsigned int)dst->mode;
 		if ((op->dst_mask & m) == 0u) {
-			print_error(ILLEGAL_ADDERSSING_MODE, line_no);
+			print_error(ILLEGAL_ADDRESSING_MODE, line_no);
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -252,12 +252,12 @@ static int validate_addressing(const OpInfo *op, const Operand *src, const Opera
 	/* op->operands == 2 */
 	m = 1u << (unsigned int)src->mode;
 	if ((op->src_mask & m) == 0u) {
-		print_error(ILLEGAL_ADDERSSING_MODE, line_no);
+		print_error(ILLEGAL_ADDRESSING_MODE, line_no);
 		return FAILURE;
 	}
 	m = 1u << (unsigned int)dst->mode;
 	if ((op->dst_mask & m) == 0u) {
-		print_error(ILLEGAL_ADDERSSING_MODE, line_no);
+		print_error(ILLEGAL_ADDRESSING_MODE, line_no);
 		return FAILURE;
 	}
 

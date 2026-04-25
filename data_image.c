@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "data_image.h"
+#include "errors.h"
 
 static void print_bin12(unsigned int v);
 
@@ -20,7 +21,7 @@ int data_image_emit(DataImage *di, unsigned int value) {
 	if (di == NULL) return FAILURE;
 
 	if (di->count >= MAX_DATA_WORDS) {
-		printf("Error: DataImage overflow (MAX_DATA_WORDS=%d)\n", MAX_DATA_WORDS);
+		print_error_no_line(DATAIMAGE_OVERFLOW);
 		return FAILURE;
 	}
 
@@ -39,8 +40,6 @@ static void print_bin12(unsigned int v) {
 		putchar((v & (1u << (unsigned int)i)) ? '1' : '0');
 	}
 }
-
-
 
 void data_image_dump(const DataImage *di, int icf) {
 	int i;

@@ -68,7 +68,7 @@ int symbols_mark_entry(SymbolTable *tab, const char *name, int line_no) {
 	}
 
 	if (s->attrs & SYM_ATTR_EXTERN) {
-		print_error(SAME_DECLERATION_FOR_BOTH_ENTRY_AND_EXTERNAL_SYMBOL, line_no);
+		print_error(SAME_DECLARATION_FOR_BOTH_ENTRY_AND_EXTERNAL_SYMBOL, line_no);
 		return FAILURE;
 	}
 
@@ -125,7 +125,7 @@ static int add_symbol(SymbolTable *tab, const char *name, int value, unsigned in
 	}
 
 	if (ensure_capacity(tab) != SUCCESS) {
-		print_error(FAILURE_IN_ADDING_MACRO_TO_TABLE, line_no);
+		print_error(FAILURE_IN_ADDING_SYMBOL_TO_TABLE, line_no);
 		return FAILURE;
 	}
 

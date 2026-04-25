@@ -47,7 +47,7 @@ int operand_parse(const char *token, Operand *out, int line_no) {
 		p++;
 		p = skip_spaces_local(p);
 		if (!is_valid_label(p)) {
-			print_error(INVALID_LABLE_IN_RELATIVE_OPERAND, line_no);
+			print_error(INVALID_LABEL_IN_RELATIVE_OPERAND, line_no);
 			return FAILURE;
 		}
 		out->mode = ADDR_RELATIVE;
@@ -65,7 +65,7 @@ int operand_parse(const char *token, Operand *out, int line_no) {
 
 	/* direct: label */
 	if (!is_valid_label(p)) {
-		print_error(INVALID_LABLE_IN_DIRECT_OPERAND, line_no);
+		print_error(INVALID_LABEL_IN_DIRECT_OPERAND, line_no);
 		return FAILURE;
 	}
 	out->mode = ADDR_DIRECT;

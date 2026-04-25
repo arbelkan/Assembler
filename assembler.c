@@ -44,7 +44,9 @@ int main (int argc, char *argv[]) {
 
         	asm_state_free(&st);
 		}
-		any_failed = 1;
+		else {
+			any_failed = 1;
+		}
     }
 
 	return any_failed ? FAILURE : SUCCESS;	

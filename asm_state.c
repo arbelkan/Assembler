@@ -1,7 +1,7 @@
-/*NOTE: minimal asm_state.c so i can compile and test assembler.c */
 #include <string.h>
 #include <stdio.h>
 #include "asm_state.h"
+#include "errors.h"
 
 /* state lifecycle */ 
 
@@ -53,7 +53,7 @@ void asm_state_finish_pass1(AsmState *st) {
 	data_words = st->DCF;
 
 	if ((code_words + data_words) > MAX_TOTAL_WORDS) {
-		printf("Error: program too large after pass1 (code=%d, data=%d, max=%d)\n", code_words, data_words, MAX_TOTAL_WORDS);
+		print_error_no_line(PROGRAM_TOO_LARGE_AFTER_PASS1);
 		return;
 	}
 
@@ -83,7 +83,7 @@ int asm_state_emit_code(AsmState *st, int address, Word w) {
 
 	/* Enforce global memory: code + data cannot exceed MAX_TOTAL_WORDS */
 	if ((code_words + data_words + 1) > MAX_TOTAL_WORDS) {
-		printf("Error: program too large (code=%d, data=%d, max=%d)\n", code_words, data_words, MAX_TOTAL_WORDS);
+		print_error_no_line(PROGRAM_TOO_LARGE);
 		return FAILURE;
 	}
 	
@@ -100,15 +100,9 @@ int asm_state_emit_data(AsmState *st, unsigned int value) {
 	data_words = st->data.count;
 
 	if ((code_words + data_words + 1) > MAX_TOTAL_WORDS) {
-		printf("Error: program too large (code=%d, data=%d, max=%d)\n", code_words, data_words, MAX_TOTAL_WORDS);
+		print_error_no_line(PROGRAM_TOO_LARGE);
 		return FAILURE;
 	}
 
 	return data_image_emit(&st->data, value);
 }
-
-
-
-
-
-

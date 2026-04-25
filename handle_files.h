@@ -2,9 +2,9 @@
 #define HANDLE_FILES_H
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include "defs.h"
+#include "errors.h"
 
  /**
   * function that opens file for reading

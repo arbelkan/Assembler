@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "code_image.h"
+#include "errors.h"
 
 void code_image_init(CodeImage *ci) {
 	int i;
@@ -30,7 +31,7 @@ int code_image_emit(CodeImage *ci, int address, Word w) {
 
 	idx = address_to_index(address);
 	if (idx < 0 || idx >= MAX_CODE_WORDS) {
-		printf("Error: CodeImage address out of range: %d\n", address);
+		print_error_no_line(CODEIMAGE_OUT_OF_RANGE);
 		return FAILURE;
 	}
 

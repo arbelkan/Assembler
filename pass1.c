@@ -22,13 +22,13 @@ int pass1_run(AsmState *st, const char *am_filename) {
 	ParsedLine pl;
 
 	if (st == NULL || am_filename == NULL) {
-		printf("Error: invalid arguments to pass1_run\n");
+		print_error_no_line(INVALID_ARGUMENTS_FOR_PASS1);
 		return FAILURE;
 	}
 	
 	fp = fopen(am_filename, "r");
 	if (fp == NULL) {
-		printf("Error: cannot open file %s\n", am_filename);
+		print_error_no_line(CANNOT_OPEN_FILE);
 		return FAILURE;
 	}
 
@@ -64,7 +64,7 @@ int pass1_run(AsmState *st, const char *am_filename) {
 	}
 
 	if (rc == LR_FAIL) {
-		printf("Error: read_line failed while reading %s\n", am_filename);
+		print_error_no_line(READLINE_FAILED_WHILE_READING);
 		fclose(fp);
 		return FAILURE;
 	}

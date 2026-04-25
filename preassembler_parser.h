@@ -3,33 +3,33 @@
 
 #define SUCCESS 0
 #define FAILURE 1
-#define MAX_MCRO_LEN 31 /* same length limitation as lable */
+#define MAX_MCRO_LEN 31 /* same length limitation as label */
 
 /**
- * check if line includes mcroend decleration
+ * check if line includes mcroend declaration
  * @param line - selected line
  * @return SUCCESS if includes, else FAILURE
  **/
 int find_mcro(const char *line);
 
 /**
- * check if line includes mcroend decleration
+ * check if line includes mcroend declaration
  * @param line - selected line
  * @return SUCCESS if includes, else FAILURE
  **/
 int find_mcroend(const char *line);
 
 /**
- * extracts macro name from decleration line
- * @param line - mcro decleration line
+ * extracts macro name from declaration line
+ * @param line - mcro declaration line
  * @return mcro name
  **/
 char* extract_mcro_name(const char *line);
 
 /**
- * validates mcro decleration line by format
- * @param line - mcro decleration line
- * @param line_number - the number of the decleration line
+ * validates mcro declaration line by format
+ * @param line - mcro declaration line
+ * @param line_number - the number of the declaration line
  * @return SUCCESS if valid, else FAILURE
  **/
 int validate_start_mcro(const char *line, int line_number);

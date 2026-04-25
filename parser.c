@@ -77,7 +77,7 @@ int parse_line(const char *line, ParsedLine *out) {
 			return FAILURE;
 		}
 
-		/* resd the next token as directive/op */
+		/* read the next token as directive/op */
 		after_tok = read_token(p, first_tok, (int)sizeof(first_tok));
 		if (after_tok == NULL) {
 			out->kind = LINE_ERROR;
