@@ -21,7 +21,7 @@ typedef struct {
  * @param name - name of the new macro
  * @return pointer to new Mcro, NULL on failure
  */
-Mcro initMcro(const char *name);
+Mcro init_mcro(const char *name);
 
 /**
  * add content to specific macro
@@ -29,19 +29,19 @@ Mcro initMcro(const char *name);
  * @param content - the content to add
  * @return success or failure
  */
-int addContent(Mcro *mcro, const char *content);
+int add_content(Mcro *mcro, const char *content);
 
 /**
  * Initialize an empty macro table
  * @param table - pointer to new McroTable
  */
-void initMcrotable(McroTable *table);
+void init_mcro_table(McroTable *table);
 
 /**
  * Free all memory allocated for macro table
  * @param table - pointer to McroTable to free
  */
-void freeMcrotable(McroTable *table);
+void free_mcro_table(McroTable *table);
 
 /**
  * Search for a macro in the macro table by name
@@ -49,7 +49,7 @@ void freeMcrotable(McroTable *table);
  * @param name - macro name to search for
  * @return pointer to Mcro if found, NULL otherwise
  */
-Mcro* searchMcro(McroTable *table, const char *name);
+Mcro* search_mcro(McroTable *table, const char *name);
 
 /**
  * Add a macro to the macro table with empty content
@@ -57,13 +57,13 @@ Mcro* searchMcro(McroTable *table, const char *name);
  * @param name - macro name
  * @return success or failure
  */
-int addMcro(McroTable *table, const char *name);
+int add_mcro(McroTable *table, const char *name);
 
 /**
  * Print the expanded macro to output
  * @param mcro - pointer to mcro to print
  * @param output - FILE pointer to output stream
  */
-void printMcro(Mcro *mcro, FILE *output);
+void print_mcro(Mcro *mcro, FILE *output);
 
 #endif

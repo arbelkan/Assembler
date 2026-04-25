@@ -72,7 +72,7 @@ int parse_line(const char *line, ParsedLine *out) {
 
 		/* continue parsing after label token */
 		p = skip_spaces(after_tok);
-		if (*p == '\0') {  /* TODO decide if line with only a label is legal/illegal depends on spec; for now mark error) */
+		if (*p == '\0') {
 			out->kind = LINE_ERROR;
 			return FAILURE;
 		}
@@ -106,12 +106,7 @@ int parse_line(const char *line, ParsedLine *out) {
 	return SUCCESS;	
 }
 
-
-
-
 /* public */
-
-
 int is_valid_label(const char *s) {
 	int i;
 	int len;
@@ -129,7 +124,6 @@ int is_valid_label(const char *s) {
 	return 1;
 }
 
-
 DirectiveKind directive_from_token(const char *token) {
 	if (token == NULL) return DIR_NONE;
 
@@ -144,15 +138,12 @@ DirectiveKind directive_from_token(const char *token) {
 
 
 /* internal helpers */
-
-
 static const char *skip_spaces(const char *p) {
 	while (p != NULL && *p != '\0' && isspace((unsigned char)*p)) {
 		p++;
 	}
 	return p;
 }
-
 
 /* Copy exactly len chars (or dst_size-1), and null-terminate */
 static void copy_token(char *dst, int dst_size, const char *start, int len) {
@@ -173,7 +164,6 @@ static void copy_token(char *dst, int dst_size, const char *start, int len) {
 	}
 	dst[n] = '\0';
 }
-
 
 /* Read a token starting at p into token[], return pointer after token.
  * Token delimiters: space/tab or ','.
@@ -202,7 +192,6 @@ static const char *read_token(const char *p, char *token, int token_size) {
 	return p;
 }
 
-
 /* Copy rest of line into dst, trimming leading spaces/tabs */
 static void copy_rest_trim_left(char *dst, int dst_size, const char *p) {
 	int i;
@@ -222,5 +211,3 @@ static void copy_rest_trim_left(char *dst, int dst_size, const char *p) {
 	}
 	dst[i] = '\0';
 }
-
-

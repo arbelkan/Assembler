@@ -25,7 +25,8 @@ int main (int argc, char *argv[]) {
 	int any_failed = 0;
 	AsmState st;
 
-	if (argc < 2) { 	/*if 0 input in command line*/
+	/*if 0 input in command line*/
+	if (argc < 2) {
 		print_usage(argv[0]);
 		return FAILURE;
 	}
@@ -36,7 +37,6 @@ int main (int argc, char *argv[]) {
 		    asm_state_init(&st, argv[i]);
 
         	if (process_one_file_pass1(&st, argv[i]) == SUCCESS) {
-			printf("Debug: pass1 completed successfully.\n"); /* temporary debug - TODO: remove after testing */
             process_one_file_pass2(&st, argv[i]);
        		 } else {
          	   any_failed = 1;
@@ -54,11 +54,11 @@ static int process_one_file_preassembler(const char *base_name) {
 	McroTable table;
 	int status;
 
-	initMcrotable(&table); /* initialize an empty mcro table */
+	init_mcro_table(&table); /* initialize an empty mcro table */
 	status = run_preassembler(&table, base_name);
 
 	/* clean up */
-	freeMcrotable(&table);
+	free_mcro_table(&table);
 	return status;
 }
 
@@ -67,38 +67,16 @@ static int process_one_file_pass1(AsmState *st, const char *base_name) {
 	int ok;
 
 	make_filename(am_file, MAX_PATH, base_name, ".am");
-	
 	ok = pass1_run(st, am_file); 	/* !!!now start pass1 on AsmState st and create its output in am_file!!! */
 
 	if (ok == SUCCESS) {
 		asm_state_finish_pass1(st);
-		code_image_dump(&st->code); /* temporary debug. TODO: delete after testing*/
-		data_image_dump(&st->data, st->ICF); /* temporary debug. TODO: delete after testing*/
-		symbols_dump(&st->symbols); /* temporary debug. TODO: delete after testing*/
 	}
-
-	if (ok == FAILURE) {
-		printf("Error: failed processing %s\n", am_file); 	/* TODO: later: replace all ERROR MSG to error module */
-		return FAILURE;
-	}
-	return SUCCESS;
+	return ok;
 }
 
 static int process_one_file_pass2(AsmState *st, const char *base_name) {
 	int status = pass2_run(st, base_name);
-
-	code_image_dump(&st->code); /* temporary debug. TODO: delete after testing*/
-	data_image_dump(&st->data, st->ICF); /* temporary debug. TODO: delete after testing*/
-	symbols_dump(&st->symbols); /* temporary debug. TODO: delete after testing*/
-
-    /* temporary debug. TODO: delete after testing*/
-	if (status != SUCCESS) {
-        printf("Error: pass2 failed for %s\n", base_name); /*TODO: later: replace all ERROR MSG to error module*/
-		return FAILURE;
-    }
-
-    printf("Debug: pass2 completed successfully.\n"); /* temporary debug - TODO: remove after testing */
-
     return status;
 }
 
@@ -106,8 +84,6 @@ static void print_usage(const char *prog) {
 	printf("Usage: %s file1 [file2...]\n", prog);
 	printf("Note: this stage expects input files with .am extension (for example: file1.am)\n");
 }
-
-
 
 static void make_filename(char *out, int out_size, const char *base, const char *ext) {
 	int base_len, ext_len;

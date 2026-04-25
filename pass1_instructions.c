@@ -9,6 +9,7 @@
 #include "encoder.h"
 #include "code_image.h"
 #include "fixups.h"
+#include "errors.h"
 
 static const char *skip_spaces_local(const char *p);
 static int parse_operands(const char *args, unsigned int expected_ops, Operand *src, Operand *dst, int line_no);
@@ -31,7 +32,7 @@ int pass1_handle_instruction(AsmState *st, const ParsedLine *pl, int line_no) {
 	op = op_find(pl->op_name);
 
 	if (op == NULL) {
-		printf("Error (line %d): unknown instruction: %s\n", line_no, pl->op_name);
+		print_error(UNKOWN_INSTRUCTION, line_no);
 		return FAILURE;
 	}
 
@@ -73,7 +74,7 @@ int pass1_handle_instruction(AsmState *st, const ParsedLine *pl, int line_no) {
 	
 	/* emit first word at current IC address */
 	if (code_image_emit(&st->code, st->IC, first) != SUCCESS) {
-		printf("Error (line %d): failed to emit code word at address: %d\n", line_no, st->IC);
+		print_error(FAILED_TO_EMIT_CODE_WORD_AT_ADDRESS, line_no);
 		return FAILURE;
 	}
 
@@ -94,7 +95,7 @@ int pass1_handle_instruction(AsmState *st, const ParsedLine *pl, int line_no) {
 		}
 
 		if (code_image_emit(&st->code, next_addr, extra) != SUCCESS) {
-			printf("Error (line %d): failed to emit operand word at address: %d\n", line_no, next_addr);
+			print_error(FAILED_TO_EMIT_OPERAND_AT_ADDRESS, line_no);
 			return FAILURE;
 		}
 
@@ -115,7 +116,7 @@ int pass1_handle_instruction(AsmState *st, const ParsedLine *pl, int line_no) {
 		}
 
 		if (code_image_emit(&st->code, next_addr, extra) != SUCCESS) {
-			printf("Error (line %d): failed to emit operand word at address: %d\n", line_no, next_addr);
+			print_error(FAILED_TO_EMIT_OPERAND_AT_ADDRESS, line_no);
 			return FAILURE;
 		}
 
@@ -125,26 +126,17 @@ int pass1_handle_instruction(AsmState *st, const ParsedLine *pl, int line_no) {
 	/* advance IC by instruction length (1+operands) */
 	l_words = 1 + (int)op->operands;
 	st->IC += l_words;
-	
-	/*temporary debug, TODO: delete after testing*/
-	printf("Debug: instr line %d encoded %d word(s), IC=%d\n", line_no, l_words, st->IC - l_words);	
 
 	return SUCCESS;
 }
 
-
-
-
 /* internal helpers */
-
-
 static const char *skip_spaces_local(const char *p) {
 	while (p != NULL && *p != '\0' && isspace((unsigned char)*p)) {
 		p++;
 	}
 	return p;
 }
-
 
 /* Parse operands from args string.
    expected_ops:
@@ -169,7 +161,7 @@ static int parse_operands(const char *args, unsigned int expected_ops, Operand *
 
 	if (expected_ops == 0u) {
 		if (*p != '\0') {
-			printf("Error (line %d): this instruction takes no operands", line_no);
+			print_error(THIS_INSTRUCTION_TAKES_NO_OPERANDS, line_no);
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -188,11 +180,11 @@ static int parse_operands(const char *args, unsigned int expected_ops, Operand *
 	
 	if (expected_ops == 1u) {
 		if (tok1[0] == '\0') {
-			printf("Error (line %d): missing operand\n", line_no);
+			print_error(MISSING_OPERAND, line_no);
 			return FAILURE;
 		}
 		if (*p != '\0') {
-			printf("Error (line %d): extra characters after operand\n", line_no);
+			print_error(EXTERNAL_CHARACTERS, line_no);
 			return FAILURE;
 		}
 		/* for instruction with 1 operand, the operand is dst */
@@ -203,12 +195,12 @@ static int parse_operands(const char *args, unsigned int expected_ops, Operand *
 	/* expected_ops == 2 */
 
 	if (tok1[0] == '\0') {
-		printf("Error (line %d): missing source operand\n", line_no);
+		print_error(MISSING_SOURCE_OPERAND, line_no);
 		return FAILURE;
 	}
 
 	if (*p != ',') {
-		printf("Error (line %d): missing ',' between operands\n", line_no);
+		print_error(MISSING_COMMA, line_no);
 		return FAILURE;
 	}
 	
@@ -225,11 +217,11 @@ static int parse_operands(const char *args, unsigned int expected_ops, Operand *
 	
 	p = skip_spaces_local(p);
 	if (*p != '\0') {
-		printf("Error (line %d): extra characters after second operand\n", line_no);
+		print_error(EXTERNAL_CHARACTERS, line_no);
 		return FAILURE;
 	}
 	if (tok2[0] == '\0') {
-		printf("Error (line %d): missing destination operand\n", line_no);
+		print_error(MISSING_DESTINATION_OPERAND, line_no);
 		return FAILURE;
 	}
 
@@ -251,7 +243,7 @@ static int validate_addressing(const OpInfo *op, const Operand *src, const Opera
 	if (op->operands == 1u) {
 		m = 1u << (unsigned int)dst->mode;
 		if ((op->dst_mask & m) == 0u) {
-			printf("Error (line %d): illegal addressing mode for destination\n", line_no);
+			print_error(ILLEGAL_ADDERSSING_MODE, line_no);
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -260,39 +252,14 @@ static int validate_addressing(const OpInfo *op, const Operand *src, const Opera
 	/* op->operands == 2 */
 	m = 1u << (unsigned int)src->mode;
 	if ((op->src_mask & m) == 0u) {
-		printf("Error (line %d): illegal addressing mode for source\n", line_no);
+		print_error(ILLEGAL_ADDERSSING_MODE, line_no);
 		return FAILURE;
 	}
 	m = 1u << (unsigned int)dst->mode;
 	if ((op->dst_mask & m) == 0u) {
-		printf("Error (line %d): illegal addressing mode for destination\n", line_no);
+		print_error(ILLEGAL_ADDERSSING_MODE, line_no);
 		return FAILURE;
 	}
 
 	return SUCCESS;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -3,10 +3,10 @@
 #include <string.h>
 
 #include "symbols.h"
+#include "errors.h"
 
 static int ensure_capacity(SymbolTable *tab);
 static int add_symbol(SymbolTable *tab, const char *name, int value, unsigned int attrs, int line_no);
-
 
 void symbols_init(SymbolTable *tab) {
 	if (tab == NULL) return;
@@ -14,7 +14,6 @@ void symbols_init(SymbolTable *tab) {
 	tab->count = 0;
 	tab->cap = 0;
 }
-
 
 void symbols_free(SymbolTable *tab) {
 	if (tab == NULL) return;
@@ -58,25 +57,24 @@ int symbols_mark_entry(SymbolTable *tab, const char *name, int line_no) {
 	Symbol *s;
 
 	if (tab == NULL || name == NULL || name[0] == '\0') {
-		printf("Error (line %d): invalid symbol name in .entry\n", line_no);
+		print_error(ILLEGAL_SYMBOL_NAME, line_no);
 		return FAILURE;
 	}
 
 	s = symbols_find(tab, name);
 	if (s == NULL) {
-		printf("Error (line %d): .entry symbol not found: %s\n", line_no, name);
+		print_error(SYMBOL_IS_MISSING, line_no);
 		return FAILURE;
 	}
 
-	if (s->attrs & SYM_ATTR_EXTERN) { /* TODO: extern&entry conflict will validate in pass2 but here i can guard it already */
-		printf("Error (line %d): symbol cannot be both extern and entry: %s\n", line_no, name);
+	if (s->attrs & SYM_ATTR_EXTERN) {
+		print_error(SAME_DECLERATION_FOR_BOTH_ENTRY_AND_EXTERNAL_SYMBOL, line_no);
 		return FAILURE;
 	}
 
 	s->attrs |= SYM_ATTR_ENTRY;
 	return SUCCESS;
 }
-
 
 void symbols_relocate_data(SymbolTable *tab, int icf) {
 	int i;
@@ -90,11 +88,7 @@ void symbols_relocate_data(SymbolTable *tab, int icf) {
 	}
 }
 
-
-
 /* internal helpers */
-
-
 static int ensure_capacity(SymbolTable *tab) {
 	Symbol *new_arr;
 	int new_cap;
@@ -110,29 +104,28 @@ static int ensure_capacity(SymbolTable *tab) {
 	return SUCCESS;
 }
 
-
 static int add_symbol(SymbolTable *tab, const char *name, int value, unsigned int attrs, int line_no) {
 	Symbol *existing;
 
 	if (tab == NULL || name == NULL || name[0] == '\0') {
-		printf("Error (line %d): invalid symbol name: %s\n", line_no, name);
+		print_error(ILLEGAL_SYMBOL_NAME, line_no);
 		return FAILURE;
 	}
 
 	if ((int)strlen(name) > SYMBOL_NAME_MAX) {
-		printf("Error (line %d): symbol name is too long: %s\n", line_no, name);
+		print_error(SYMBOL_NAME_LONGER_THAN_31_CHARACTERS, line_no);
 		return FAILURE;
 	}
 
 	existing = symbols_find(tab, name);
 	if (existing != NULL) {
 		if ((attrs & SYM_ATTR_EXTERN) && (existing->attrs & SYM_ATTR_EXTERN)) return SUCCESS; /*allow repeat .extern for the same symbol*/
-		printf("Error (line %d): duplicate symbol definition: %s\n", line_no, name);
+		print_error(SYMBOL_ALREADY_DEFINED, line_no);
 		return FAILURE;
 	}
 
 	if (ensure_capacity(tab) != SUCCESS) {
-		printf("Error (line %d): out of memory space while adding symbol: %s\n", line_no, name);
+		print_error(FAILURE_IN_ADDING_MACRO_TO_TABLE, line_no);
 		return FAILURE;
 	}
 
@@ -146,8 +139,7 @@ static int add_symbol(SymbolTable *tab, const char *name, int value, unsigned in
 	return SUCCESS;
 }
 
-
-/* debug helper. TODO: delete after testing */
+/* debug helper */
 void symbols_dump(const SymbolTable *tab) {
 	int i;
 	const Symbol *s;
@@ -173,21 +165,3 @@ void symbols_dump(const SymbolTable *tab) {
 		printf("  %-31s  value=%4d  attrs=%s\n", s->name, s->value, attrs_buf);
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

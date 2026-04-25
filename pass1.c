@@ -7,10 +7,10 @@
 #include "symbols.h"
 #include "ops.h"
 #include "pass1_instructions.h"
+#include "errors.h"
 
 static const char *skip_spaces(const char *p);
 static int is_blank_or_comment(const char *line);
-
 
 int pass1_run(AsmState *st, const char *am_filename) {
 	FILE *fp;
@@ -34,15 +34,14 @@ int pass1_run(AsmState *st, const char *am_filename) {
 
 	while ((rc = read_line(fp , line, (int)sizeof(line), &line_no, &too_long)) == LR_OK) {
 		if (too_long) {
-			/* TODO:route this through the shared errors module (Arbel) */	
-			printf("Error: line %d is longer than %d characters\n", line_no, LINE_MAX);
+			print_error(LINE_LONGER_THAN_80_CHARACTERS, line_no);
 			ok = FAILURE;
 		}
 		if (is_blank_or_comment(line)) {
 			continue;
 		}
 		if (parse_line(line, &pl) != SUCCESS) {
-			printf("Parse error at line %d: %s\n", line_no, line);
+			print_error(PARSE_ERROR, line_no);
 			ok = FAILURE;
 			continue;
 		}
@@ -53,16 +52,11 @@ int pass1_run(AsmState *st, const char *am_filename) {
 				/* keep going to find more errors */
 				ok = FAILURE;
 			}
-			else {
-				/* Temporary debug: show DC/data count after directive */
-				printf("Debug: after line %d directive, DC=%d, data.count=%d\n", line_no, st->DC, st->data.count); 
-			}
 		}
 		else if (pl.kind == LINE_INSTRUCTION) {
 			if (pass1_handle_instruction(st, &pl, line_no) != SUCCESS) {
 				/* pass1_handle_instruction already printed an error */
 				/* keep going to find more errors */
-				/* TODO: make sure that empty if block doesnt cause bugs */
 				ok = FAILURE;
 			}
 		}
@@ -79,19 +73,13 @@ int pass1_run(AsmState *st, const char *am_filename) {
 	return ok;
 }
 
-
-
-
 /* helpers */
-
-
 static const char *skip_spaces(const char *p) {
 	while (p != NULL && *p != '\0' && isspace((unsigned char)*p)) {
 		p++;
 	}
 	return p;
 }
-
 
 static int is_blank_or_comment(const char *line) {
 	const char *p;
@@ -101,4 +89,3 @@ static int is_blank_or_comment(const char *line) {
 	if (*p == ';') { return FAILURE; }
 	return SUCCESS;
 }
-

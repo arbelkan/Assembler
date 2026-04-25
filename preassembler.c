@@ -46,7 +46,7 @@ int run_preassembler(McroTable *table, const char *base_name) {
 
         /* checks if line is too long */
         if (strlen(line) > MAX_LINE && line[MAX_LINE] != '\n' && line[MAX_LINE] != '\0') {
-            printError(LINE_LONGER_THAN_80_CHARACTERS, line_number);
+            print_error(LINE_LONGER_THAN_80_CHARACTERS, line_number);
             /* not an error in the preassembler process and will not change status to FAILURE */
         }
 
@@ -60,8 +60,8 @@ int run_preassembler(McroTable *table, const char *base_name) {
             in_macro = TRUE;
 
             /* Step 5: add new macro to table */
-            if (addMcro(table, extract_mcro_name(line)) == FAILURE) {
-                printError(FAILURE_IN_ADDIND_MACRO_TO_TABLE, line_number);
+            if (add_mcro(table, extract_mcro_name(line)) == FAILURE) {
+                print_error(FAILURE_IN_ADDING_MACRO_TO_TABLE, line_number);
                 status = FAILURE;
                 in_macro = 0;
             }
@@ -84,16 +84,16 @@ int run_preassembler(McroTable *table, const char *base_name) {
             }
 
             /* Step 6: accumulate into macro content */
-            if (addContent(&table->macros[current_mcro], line) == FAILURE)
+            if (add_content(&table->macros[current_mcro], line) == FAILURE)
                 status = FAILURE;
             continue; /* body line not written to output */
         }
 
         /* Step 2: is the first token a macro name? */
         get_first_token(line, token, LINE_BUF_SIZE);
-        found = searchMcro(table, token);
+        found = search_mcro(table, token);
         if (found != NULL) {
-            printMcro(found, output);
+            print_mcro(found, output);
             continue;
         }
         fputs(line, output); /* Regular line: copy to output file */

@@ -60,7 +60,7 @@ int validate_start_mcro(const char *line, int line_number) {
     char *mcro_name = extract_mcro_name(line);
 
     if (strncmp(ptr, "mcro", 4) != 0) {
-        printError(DECLERATION_OF_MACRO_LINE_INCLUDES_EXTERNAL_CHARACTERS, line_number);
+        print_error(DECLERATION_OF_MACRO_LINE_INCLUDES_EXTERNAL_CHARACTERS, line_number);
         return FAILURE;
     }
     ptr += 4;
@@ -73,7 +73,7 @@ int validate_start_mcro(const char *line, int line_number) {
     ptr += strlen(mcro_name);
     ptr = skip_spaces_internal(ptr);
     if (!(*ptr == '\0' || *ptr == '\n' || *ptr == '\r')) {
-        printError(DECLERATION_OF_MACRO_LINE_INCLUDES_EXTERNAL_CHARACTERS, line_number);
+        print_error(DECLERATION_OF_MACRO_LINE_INCLUDES_EXTERNAL_CHARACTERS, line_number);
         return FAILURE;
     }
     return SUCCESS;
@@ -85,13 +85,13 @@ int validate_end_mcro(const char *line, int line_number) {
 
     /* Check for "mcroend" */
     if (strncmp(ptr, "mcroend", 7) != 0) {
-        printError(END_OF_MACRO_LINE_INCLUDES_EXTERNAL_CHARACTERS, line_number);
+        print_error(END_OF_MACRO_LINE_INCLUDES_EXTERNAL_CHARACTERS, line_number);
         return FAILURE;
     }
     ptr += 7;
     ptr = skip_spaces_internal(ptr);/* Only whitespace/ newline should follow */
     if(!(*ptr == '\0' || *ptr == '\n' || *ptr == '\r')) {
-        printError(END_OF_MACRO_LINE_INCLUDES_EXTERNAL_CHARACTERS, line_number);
+        print_error(END_OF_MACRO_LINE_INCLUDES_EXTERNAL_CHARACTERS, line_number);
         return FAILURE;
     }
     return SUCCESS;
@@ -117,25 +117,25 @@ static int validate_mcro_name(const char *line, int line_number) {
     mcro_name[len] = '\0';
 
     if (len == 0) {
-        printError(MACRO_NAME_IS_MISSING, line_number);
+        print_error(MACRO_NAME_IS_MISSING, line_number);
         return FAILURE;
     }
     if (len > MAX_MCRO_LEN) {
-        printError(ILLEGAL_MACRO_NAME, line_number);
+        print_error(ILLEGAL_MACRO_NAME, line_number);
         return FAILURE;
     }
     if (!isalpha((unsigned char)mcro_name[0])) {
-        printError(ILLEGAL_MACRO_NAME, line_number);
+        print_error(ILLEGAL_MACRO_NAME, line_number);
         return FAILURE;
     }
     for (i = 1; i < len; i++) {
         if (!isalnum((unsigned char)mcro_name[i]) && mcro_name[i] != '_') {
-            printError(ILLEGAL_MACRO_NAME, line_number);
+            print_error(ILLEGAL_MACRO_NAME, line_number);
             return FAILURE;
         }
     }
     if (op_find(mcro_name) != NULL) {
-        printError(MACRO_NAME_IS_AN_INSTRUCTION, line_number);
+        print_error(MACRO_NAME_IS_AN_INSTRUCTION, line_number);
         return FAILURE;
     }
     return SUCCESS;

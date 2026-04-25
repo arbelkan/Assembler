@@ -55,5 +55,4 @@ int fixups_add(FixupTable *ft, int address, AddrMode mode, const char *label, in
  */
 void fixups_dump(const FixupTable *ft);
 
-
 #endif

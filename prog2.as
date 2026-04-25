@@ -1,11 +1,14 @@
       .entry LIST
       .extern W
 MAIN: add r3, LIST
-LOOP: prn #48
-      lea W, r6
+      mcro GEN_MC
       inc r6
       mov r3, K
       sub r1, r4
+      mcroend
+LOOP: prn #48
+      lea W, r6
+      GEN_MC
       bne END
       cmp K, #-6
       bne %END

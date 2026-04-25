@@ -16,8 +16,6 @@ void data_image_init(DataImage *di) {
 	}
 }
 
-
-
 int data_image_emit(DataImage *di, unsigned int value) {
 	if (di == NULL) return FAILURE;
 
@@ -33,8 +31,6 @@ int data_image_emit(DataImage *di, unsigned int value) {
 	return SUCCESS;
 }
 
-
-/*TODO: delete after testing (temporary debug)*/
 static void print_bin12(unsigned int v) {
 	int i;
 

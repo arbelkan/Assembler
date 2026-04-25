@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "operand.h"
+#include "errors.h"
 
 static const char *skip_spaces_local(const char *p);
 static int parse_register(const char *s, int *reg_out);
@@ -24,7 +25,7 @@ int operand_parse(const char *token, Operand *out, int line_no) {
 	p = skip_spaces_local(token);
 
 	if (*p == '\0') {
-		printf("Error (line %d): missing operand\n", line_no);
+		print_error(MISSING_OPERAND, line_no);
 		return FAILURE;
 	}
 
@@ -33,7 +34,7 @@ int operand_parse(const char *token, Operand *out, int line_no) {
 		p++;
 		p = skip_spaces_local(p);
 		if (parse_signed_long(p, &v) != SUCCESS) {
-			printf("Error (line %d): invalid immediate number\n", line_no);
+			print_error(ILLEGAL_NUMBER, line_no);
 			return FAILURE;
 		}
 		out->mode = ADDR_IMMEDIATE;
@@ -46,7 +47,7 @@ int operand_parse(const char *token, Operand *out, int line_no) {
 		p++;
 		p = skip_spaces_local(p);
 		if (!is_valid_label(p)) {
-			printf("Error (line %d): invalid label in relative operand\n", line_no);
+			print_error(INVALID_LABLE_IN_RELATIVE_OPERAND, line_no);
 			return FAILURE;
 		}
 		out->mode = ADDR_RELATIVE;
@@ -64,7 +65,7 @@ int operand_parse(const char *token, Operand *out, int line_no) {
 
 	/* direct: label */
 	if (!is_valid_label(p)) {
-		printf("Error (line %d): invalid label in direct operand\n", line_no);
+		print_error(INVALID_LABLE_IN_DIRECT_OPERAND, line_no);
 		return FAILURE;
 	}
 	out->mode = ADDR_DIRECT;
@@ -129,20 +130,3 @@ static int parse_signed_long(const char *s, long *out_val) {
 	*out_val = v * sign;
 	return SUCCESS;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -28,12 +28,12 @@ void symbols_free(SymbolTable *tab);
 
 Symbol *symbols_find(SymbolTable *tab, const char *name);
 
-/* Add symbol kinds (return SUCCESS/FAILURE). TODO: line_no only for error prints for now, later in error module of Arbel. */
+/* Add symbol kinds (return SUCCESS/FAILURE) */
 int symbols_add_code(SymbolTable *tab, const char *name, int value, int line_no);
 int symbols_add_data(SymbolTable *tab, const char *name, int value, int line_no);
 int symbols_add_extern(SymbolTable *tab, const char *name, int line_no);
 
-/* mark an existing symbol as ENTRY. TODO: pass2 will call this*/
+/* mark an existing symbol as ENTRY */
 int symbols_mark_entry(SymbolTable *tab, const char *name, int line_no);
 
 /* after pass1 - add ICF to all DATA symbols */

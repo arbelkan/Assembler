@@ -11,6 +11,7 @@ static char* errors[ERR_MAX] = {
     "failure in adding macro to table",
     "line longer than 80 characters",
     "external comma",
+    "missing comma",
     "comma not in place",
     "same decleration for both entry and extern symbol",
     "illegal symbol name",
@@ -19,18 +20,36 @@ static char* errors[ERR_MAX] = {
     "symbol already defines",
     "decleration both for macro and symbol",
     "symbol not defined",
+    "symbol is missing",
     "illegal number",
+    "illegal argument",
     "unkown instruction",
+    "unkown directive",
     "unkown register",
-    "too many operands",
-    "not enough operands",
-    "operand not suitable for instruction"
+    "too many arguments",
+    "not enough arguments",
+    "operand not suitable for instruction",
+    "lable before extern is not allowed",
+    "lable before entry is not allowed",
+    "invalid lable in relative operand",
+    "invalid label in direct operand",
+    "missing opening quote",
+    "missing closing quote"
+    "external characters",
+    "failed to emit code word at address",
+    "failed to emit operand at address",
+    "this instruction takes no operands",
+    "missing operand",
+    "missing source operand",
+    "missing destination operand",
+    "illegal addressing mode",
+    "parse error"
 };
 
 /**
 * printing error and its line using error code
 **/
-unsigned int printError(unsigned int errorCode, unsigned int lineNumber){
+unsigned int print_error(unsigned int errorCode, unsigned int lineNumber){
     printf("error in line %u: %s\n", lineNumber, errors[errorCode]);
     return errorCode;
 }

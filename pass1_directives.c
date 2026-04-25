@@ -2,6 +2,7 @@
 #include <ctype.h>
 #include <string.h>
 
+#include "errors.h"
 #include "pass1_directives.h"
 #include "data_image.h"
 
@@ -17,7 +18,6 @@ static int parse_int_list_and_emit(AsmState *st, const char *args, int line_no);
 static int parse_quoted_string_and_emit(AsmState *st, const char *args, int line_no);
 static int parse_single_symbol(const char *args, char *out, int out_size, int line_no);
 
-
 int pass1_handle_directive(AsmState *st, const ParsedLine *pl, int line_no) {
 	if (st == NULL || pl == NULL) {
 		return FAILURE;
@@ -28,44 +28,40 @@ int pass1_handle_directive(AsmState *st, const ParsedLine *pl, int line_no) {
 		case DIR_EXTERN: return handle_extern(st, pl, line_no);
 		case DIR_ENTRY: return handle_entry(st, pl, line_no);
 		default: 
-			printf("ERROR (line %d): unknown directive\n", line_no);
+			print_error(UNKOWN_DIRECTIVE, line_no);
 			return FAILURE;
 	}
 }
-
 
 static int handle_data(AsmState *st, const ParsedLine *pl, int line_no) {
 	if (pl->has_label) {
 		if (symbols_add_data(&st->symbols, pl->label, st->DC, line_no) != SUCCESS) return FAILURE;
 	}
 	if (pl->args[0] == '\0') {
-		printf("Error (line %d): .data missing arguments\n", line_no);
+		print_error(NOT_ENOUGH_ARGUMENTS, line_no);
 		return FAILURE;
 	}
 	return parse_int_list_and_emit(st, pl->args, line_no);
 }
-
 
 static int handle_string(AsmState *st, const ParsedLine *pl, int line_no) {
 	if (pl->has_label) {
 		if (symbols_add_data(&st->symbols, pl->label, st->DC, line_no) != SUCCESS) return FAILURE;
 	}
 	if (pl->args[0] == '\0') {
-		printf("Error (line %d): .string missing arguments\n", line_no);
+		print_error(NOT_ENOUGH_ARGUMENTS, line_no);
 		return FAILURE;
 	}
 	return parse_quoted_string_and_emit(st, pl->args, line_no);
 }
-
 
 static int handle_extern(AsmState *st, const ParsedLine *pl, int line_no) {
 	char sym[MAX_LABEL_LEN + 1];
 	(void)st;
 
 	if (pl->has_label) {
-		/* TODO: check if  the spec forbid label before .extern; keep strictness for later if needed */
         	/* For now we treat it as an error to be safe */
-        	printf("Error (line %d): label before .extern is not allowed\n", line_no);
+        	print_error(LABLE_BEFORE_EXTERN_IS_NOT_ALLOWED, line_no);
         	return FAILURE;
 	}
 
@@ -74,7 +70,7 @@ static int handle_extern(AsmState *st, const ParsedLine *pl, int line_no) {
 	}
 	
 	if(!is_valid_label(sym)) {
-		printf("Error (line %d): invalid extern symbol name: %s\n", line_no, sym);
+		print_error(ILLEGAL_SYMBOL_NAME, line_no);
         	return FAILURE;
 	}
 
@@ -83,13 +79,12 @@ static int handle_extern(AsmState *st, const ParsedLine *pl, int line_no) {
     	return SUCCESS;
 }
 
-
 static int handle_entry(AsmState *st, const ParsedLine *pl, int line_no) {
 	char sym[MAX_LABEL_LEN + 1];
 	(void)st;
 
 	if (pl->has_label) {
-		printf("Error (line %d): label before .entry is not allowed\n", line_no);
+		print_error(LABLE_BEFORE_ENTRY_IS_NOT_ALLOWED, line_no);
         	return FAILURE;
 	}
 
@@ -98,23 +93,14 @@ static int handle_entry(AsmState *st, const ParsedLine *pl, int line_no) {
 	}
 	
 	if (!is_valid_label(sym)) {
-        	printf("Error (line %d): invalid entry symbol name: %s\n", line_no, sym);
+        	print_error(ILLEGAL_SYMBOL_NAME, line_no);
         	return FAILURE;
 	}
 
-	/* TODO:
-	- record this entry request for pass2 OR mark it later when symbol exists.
-	- could store in a pending list in AsmState.
-	*/
 	return SUCCESS;
 }
 
-
-
-
 /* data emission helpers */
-
-
 static int emit_data_word(AsmState *st, unsigned int value, int line_no) {
 	(void)line_no;
 
@@ -133,7 +119,6 @@ static const char *skip_spaces(const char *p) {
 	return p;
 }
 
-
 static int parse_int_list_and_emit(AsmState *st, const char *args, int line_no) {
 	const char *p;
 	int sign;
@@ -150,7 +135,7 @@ static int parse_int_list_and_emit(AsmState *st, const char *args, int line_no) 
 		
 		if(!expecting_number) {
 			if (*p != ',') {
-				printf("Error (line %d): .data expects ',' between numbers\n", line_no);
+				print_error(MISSING_COMMA, line_no);
 				return FAILURE;
 			}
 			p++; /* find a comma */
@@ -165,7 +150,7 @@ static int parse_int_list_and_emit(AsmState *st, const char *args, int line_no) 
 			p++;
 		}
 		if (!isdigit((unsigned char)*p)) {
-			printf("Error (line %d): .data expects a number\n", line_no);
+			print_error(ILLEGAL_ARGUMENT, line_no);
 			return FAILURE;
 		}
 		val = 0;
@@ -176,12 +161,11 @@ static int parse_int_list_and_emit(AsmState *st, const char *args, int line_no) 
 			p++;
 		}
 		if (!saw_digit) {
-			printf("Error (line %d): .data expects digits\n", line_no);
+			print_error(ILLEGAL_ARGUMENT, line_no);
 			return FAILURE;
 		}
 		val *= sign;
 
-		/* TODO: Range checks will be added later according the spec (e.g., 12-bit signed) */
 		if (emit_data_word(st, (unsigned int)val, line_no) != SUCCESS) {
 			return FAILURE;
 		}
@@ -190,12 +174,11 @@ static int parse_int_list_and_emit(AsmState *st, const char *args, int line_no) 
 	}
 	
 	if (expecting_number) {
-		printf("Error (line %d): .data expects a number at end\n", line_no);
+		print_error(NOT_ENOUGH_ARGUMENTS, line_no);
 		return FAILURE;
 	}
 	return SUCCESS;
 }
-
 
 static int parse_quoted_string_and_emit(AsmState *st, const char *args, int line_no) {
 	const char *p;
@@ -203,7 +186,7 @@ static int parse_quoted_string_and_emit(AsmState *st, const char *args, int line
 
 	p = skip_spaces(args);
 	if (*p != '"') {
-		printf("Error (line %d): .string expects opening quote (\")\n", line_no);
+		print_error(MISSING_OPENING_QUOTE, line_no);
         	return FAILURE;
 	}
 	p++; /* skip openning quote */
@@ -218,7 +201,7 @@ static int parse_quoted_string_and_emit(AsmState *st, const char *args, int line
 	}
 	
 	if (*p != '"') {
-		printf("Error (line %d): .string missing closing quote (\")\n", line_no);
+		print_error(MISSING_CLOSING_QUOTE, line_no);
         	return FAILURE;
 	}
 
@@ -227,7 +210,7 @@ static int parse_quoted_string_and_emit(AsmState *st, const char *args, int line
 	/* after closing quote: only spaces allowed */
 	p = skip_spaces(p);
 	if (*p != '\0') {
-		printf("Error (line %d): extra characters after .string\n", line_no);
+		print_error(EXTERNAL_CHARACTERS, line_no);
         	return FAILURE;
 	}
 
@@ -236,7 +219,6 @@ static int parse_quoted_string_and_emit(AsmState *st, const char *args, int line
 	
 	return SUCCESS;
 }
-
 
 static int parse_single_symbol(const char *args, char *out, int out_size, int line_no) {
 	const char *p;
@@ -247,13 +229,13 @@ static int parse_single_symbol(const char *args, char *out, int out_size, int li
 	out[0] = '\0';
 
 	if (args == NULL) {
-		printf("Error (line %d): missing symbol name\n", line_no);
+		print_error(SYMBOL_IS_MISSING, line_no);
         	return FAILURE;
 	}
 
 	p = skip_spaces(args);
 	if (*p == '\0') {
-		printf("Error (line %d): missing symbol name\n", line_no);
+		print_error(SYMBOL_IS_MISSING, line_no);
         	return FAILURE;
 	}
 
@@ -267,11 +249,9 @@ static int parse_single_symbol(const char *args, char *out, int out_size, int li
 	/* ensure that only spaces remain*/
 	p = skip_spaces(p);
 	if (*p != '\0') {
-		printf("Error (line %d): extra text after symbol name\n", line_no);
+		print_error(EXTERNAL_CHARACTERS, line_no);
         	return FAILURE;
 	}
 
 	return SUCCESS;
 }
-
-

@@ -4,7 +4,6 @@
 #include "word.h"
 #include "ops.h"
 
-
 /* Encodes the first instruction word (12-bit value + ARE='A').
  * Bit layout (per project):
  *  bits 11-8 : opcode
@@ -15,6 +14,6 @@
 Word encode_first_word(const OpInfo *op, AddrMode src_mode, AddrMode dst_mode);
 Word encode_immediate(long value);
 Word encode_register(int reg_num);
-Word encode_placeholder(void); /* TODO: add fixups */
+Word encode_placeholder(void);
 
 #endif

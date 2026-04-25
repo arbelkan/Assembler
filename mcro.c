@@ -7,7 +7,7 @@
 /**
  * Initialize an empty macro
  */
-Mcro initMcro(const char *name)
+Mcro init_mcro(const char *name)
 {
     Mcro mcro;
 
@@ -34,7 +34,7 @@ Mcro initMcro(const char *name)
 /**
  * add content to specific macro
  */
-int addContent(Mcro *mcro, const char *content)
+int add_content(Mcro *mcro, const char *content)
 {
     char *new_content;
     size_t new_len;
@@ -56,7 +56,7 @@ int addContent(Mcro *mcro, const char *content)
  * Print the expanded macro to output
  * Prints the macro name and its full content
  */
-void printMcro(Mcro *mcro, FILE *output) {
+void print_mcro(Mcro *mcro, FILE *output) {
     if (mcro == NULL || output == NULL) {
         return;
     }
@@ -67,7 +67,7 @@ void printMcro(Mcro *mcro, FILE *output) {
 /**
  * Initialize an empty macro table
  */
-void initMcrotable(McroTable *table) {
+void init_mcro_table(McroTable *table) {
     table->macros = NULL;
     table->count = 0;
     table->capacity = 0;
@@ -77,7 +77,7 @@ void initMcrotable(McroTable *table) {
 /**
  * Free all memory allocated for macro table
  */
-void freeMcrotable(McroTable *table) {
+void free_mcro_table(McroTable *table) {
     int i;
 
     if (table == NULL)
@@ -99,7 +99,7 @@ void freeMcrotable(McroTable *table) {
  * Search for a macro in the macro table by name
  * Returns the macro if found, 0 otherwise
  */
-Mcro* searchMcro(McroTable *table, const char *name) {
+Mcro* search_mcro(McroTable *table, const char *name) {
     int i;
     if (table == NULL || name == NULL) {
         return NULL;
@@ -119,7 +119,7 @@ Mcro* searchMcro(McroTable *table, const char *name) {
  * If the table is full, it expands the capacity
  * Returns 1 on success, 0 on failure
  */
-int addMcro(McroTable *table, const char *name) {
+int add_mcro(McroTable *table, const char *name) {
     Mcro *newMacros = NULL;
     int new_cap;
 
@@ -137,7 +137,7 @@ int addMcro(McroTable *table, const char *name) {
     }
 
     /*Add new macro*/
-    table->macros[table->count] = initMcro(name);
+    table->macros[table->count] = init_mcro(name);
     if (table->macros[table->count].name == NULL || table->macros[table->count].content == NULL)
         return FAILURE;
 

@@ -57,8 +57,6 @@ int pass2_run(AsmState *st, const char *am_filename) {
 
     fclose(fp);
 
-	fixups_dump(&st->fixups); /* temporary debug. TODO: delete after testing*/
-
     if (rc == LR_FAIL) {
         printf("Error: read_line failed while reading %s\n", am_file);
         return FAILURE;
@@ -87,12 +85,12 @@ static int handle_entry_directive(AsmState *st, const ParsedLine *pl, int line_n
 
     /* check extern conflict before marking entry */
     if (sym != NULL && (sym->attrs & SYM_ATTR_EXTERN)) {
-        printError(SAME_DECLERATION_FOR_BOTH_ENTRY_AND_EXTERNAL_SYMBOL, (unsigned int)line_number);
+        print_error(SAME_DECLERATION_FOR_BOTH_ENTRY_AND_EXTERNAL_SYMBOL, (unsigned int)line_number);
         return FAILURE;
     }
 
     if (symbols_mark_entry(&st->symbols, pl->args, line_number) != SUCCESS) {
-        printError(SYMBOL_NOT_DEFINED, (unsigned int)line_number);
+        print_error(SYMBOL_NOT_DEFINED, (unsigned int)line_number);
         return FAILURE;
     }
 
@@ -106,7 +104,7 @@ static int resolve_one_fixup(AsmState *st, const Fixup *fix) {
     int dist;
 
     if (sym == NULL) {
-        printError(SYMBOL_NOT_DEFINED, (unsigned int)fix->line_number);
+        print_error(SYMBOL_NOT_DEFINED, (unsigned int)fix->line_number);
         return FAILURE;
     }
 
@@ -116,7 +114,6 @@ static int resolve_one_fixup(AsmState *st, const Fixup *fix) {
     if (sym->attrs & SYM_ATTR_EXTERN) {
         w.value = 0u;
         w.are = 'E';
-        /* TODO: record use-address for .ext output file */
     }
     else if (fix->mode == ADDR_DIRECT) {
         w.value = (unsigned int)sym->value & 0x0FFFu;
@@ -129,7 +126,7 @@ static int resolve_one_fixup(AsmState *st, const Fixup *fix) {
     }
 
     if (code_image_set(&st->code, fix->address, w) != SUCCESS) {
-        printError(SYMBOL_NOT_DEFINED, (unsigned int)fix->line_number);
+        print_error(SYMBOL_NOT_DEFINED, (unsigned int)fix->line_number);
         return FAILURE;
     }
 

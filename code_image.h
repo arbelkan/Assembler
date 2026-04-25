@@ -26,7 +26,7 @@ int code_image_emit(CodeImage *ci, int address, Word w);
 /* same as code_image_emit but for pass2 fixup */
 int code_image_set(CodeImage *ci, int address, Word w);
 
-/* Debug helper (temporary): print code image to stdout. TODO: delete after testing */
+/* Debug helper (temporary): print code image to stdout */
 void code_image_dump(const CodeImage *ci);
 
 #endif

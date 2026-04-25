@@ -3,8 +3,6 @@
 #include <stdio.h>
 #include "asm_state.h"
 
-
-
 /* state lifecycle */ 
 
 /* initial state (of 1 file) to clean */
@@ -27,7 +25,6 @@ void asm_state_init(AsmState *st, const char *base_name) {
 	/* initialize symbol table (SymbolTable symbols) */ 
 	symbols_init(&st->symbols);
 
-	/* TODO - documentation for Shahr what has changed */
 	/* initialize fixups table*/
 	fixups_init(&st->fixups);
 
@@ -71,19 +68,8 @@ void asm_state_free(AsmState *st) {
 
 	symbols_free(&st->symbols);
 
-	fixups_free(&st->fixups); /* TODO - documentation for Shahr what has changed */
-
-	/*
-	*
-	* TODO (later): if CodeImage/DataImage/SymbolTable/Fixups become dynamic, free them here:
-	*   code_image_free(&st->code);
-	*   data_image_free(&st->data);
-	*   symbols_free(&st->symbols); - done
-	*   fixups_free(&st->fixups);
-	*/
+	fixups_free(&st->fixups);
 }
-
-
 
 int asm_state_emit_code(AsmState *st, int address, Word w) {
 	int code_words;
@@ -103,9 +89,6 @@ int asm_state_emit_code(AsmState *st, int address, Word w) {
 	
 	return code_image_emit(&st->code, address, w);
 }
-
-
-
 
 int asm_state_emit_data(AsmState *st, unsigned int value) {
 	int code_words;
